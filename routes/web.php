@@ -1,11 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Route;
+
 // use App\Http\Controllers\Alumni\DashboardController;
 // use App\Http\Controllers\Alumni\ProfilController;
 // use App\Http\Controllers\Alumni\TracerController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -32,12 +32,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 | Hanya bisa diakses jika login menggunakan Guard 'alumni'
 */
 Route::middleware(['auth:alumni'])->prefix('alumni')->name('alumni.')->group(function () {
-    
+
     // Dashboard Alumni
-    Route::get('/dashboard', function () {
-        return view('alumni.dashboard'); 
-        // Nanti ganti jadi: [DashboardController::class, 'index']
-    })->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\Alumni\DashboardController::class, 'index'])->name('dashboard');
 
     // Profil Alumni
     Route::get('/profil', function () {
@@ -50,11 +47,11 @@ Route::middleware(['auth:alumni'])->prefix('alumni')->name('alumni.')->group(fun
     //     return view('alumni.tracer.wizard');
     //     // Nanti ganti jadi: [TracerController::class, 'create']
     // })->name('tracer.wizard');
-    
+
     // Nanti tambahkan route POST di sini untuk simpan data
     // Tracer Study
     Route::get('/tracer/isi', [App\Http\Controllers\Alumni\TracerController::class, 'create'])->name('tracer.wizard');
-    
+
     // TAMBAHKAN INI:
     Route::post('/tracer/simpan', [App\Http\Controllers\Alumni\TracerController::class, 'store'])->name('tracer.store');
 });

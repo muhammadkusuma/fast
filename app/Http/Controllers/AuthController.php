@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -31,10 +30,10 @@ class AuthController extends Controller
             if (Auth::guard('web')->attempt(['email' => $identity, 'password' => $password], $remember)) {
                 $request->session()->regenerate();
                 // Redirect ke Dashboard Admin (atau Filament)
-                return redirect()->intended('/dashboard'); 
+                return redirect()->intended('/dashboard');
             }
-        } 
-        
+        }
+
         // LOGIC B: Jika bukan Email (Angka/NIM) -> Maka Login ALUMNI
         else {
             if (Auth::guard('alumni')->attempt(['nim' => $identity, 'password' => $password], $remember)) {
