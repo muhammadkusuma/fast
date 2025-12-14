@@ -1,11 +1,11 @@
 <?php
 
+use App\Http\Controllers\Alumni\TracerController;
 use App\Http\Controllers\AuthController;
-use Illuminate\Support\Facades\Route;
 
 // use App\Http\Controllers\Alumni\DashboardController;
 // use App\Http\Controllers\Alumni\ProfilController;
-// use App\Http\Controllers\Alumni\TracerController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,18 +39,13 @@ Route::middleware(['auth:alumni'])->prefix('alumni')->name('alumni.')->group(fun
     // Profil Alumni
     Route::get('/profil', [App\Http\Controllers\Alumni\ProfileController::class, 'index'])->name('profil');
     Route::put('/profil', [App\Http\Controllers\Alumni\ProfileController::class, 'update'])->name('profil.update');
-    // Tracer Study Wizard
-    // Route::get('/tracer/isi', function () {
-    //     return view('alumni.tracer.wizard');
-    //     // Nanti ganti jadi: [TracerController::class, 'create']
-    // })->name('tracer.wizard');
 
-    // Nanti tambahkan route POST di sini untuk simpan data
-    // Tracer Study
-    Route::get('/tracer/isi', [App\Http\Controllers\Alumni\TracerController::class, 'create'])->name('tracer.wizard');
+    // === PERBAIKAN DI SINI ===
+    // Ubah nama dari 'tracer.wizard' menjadi 'tracer.create'
+    Route::get('/tracer/isi', [TracerController::class, 'create'])->name('tracer.create');
 
-    // TAMBAHKAN INI:
-    Route::post('/tracer/simpan', [App\Http\Controllers\Alumni\TracerController::class, 'store'])->name('tracer.store');
+    // Route untuk simpan (Store)
+    Route::post('/tracer/simpan', [TracerController::class, 'store'])->name('tracer.store');
 });
 
 /*
