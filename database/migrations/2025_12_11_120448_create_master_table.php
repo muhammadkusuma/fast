@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-       // 1. Master Fakultas
+        // 1. Master Fakultas
         Schema::create('m_fakultas', function (Blueprint $table) {
             $table->id();
             $table->string('kode_fakultas', 10);
@@ -57,7 +57,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-       Schema::dropIfExists('m_alumni');
+        Schema::dropIfExists('m_alumni');
         Schema::dropIfExists('m_prodi');
         Schema::dropIfExists('m_fakultas');
     }

@@ -37,11 +37,8 @@ Route::middleware(['auth:alumni'])->prefix('alumni')->name('alumni.')->group(fun
     Route::get('/dashboard', [App\Http\Controllers\Alumni\DashboardController::class, 'index'])->name('dashboard');
 
     // Profil Alumni
-    Route::get('/profil', function () {
-        return view('alumni.profil');
-        // Nanti ganti jadi: [ProfilController::class, 'index']
-    })->name('profil');
-
+    Route::get('/profil', [App\Http\Controllers\Alumni\ProfileController::class, 'index'])->name('profil');
+    Route::put('/profil', [App\Http\Controllers\Alumni\ProfileController::class, 'update'])->name('profil.update');
     // Tracer Study Wizard
     // Route::get('/tracer/isi', function () {
     //     return view('alumni.tracer.wizard');

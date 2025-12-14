@@ -15,7 +15,7 @@
                         src="https://ui-avatars.com/api/?name={{ urlencode($alumni->nama_lengkap) }}&background=1e40af&color=fff&size=256"
                         alt="Foto Profil">
 
-                    {{-- Tombol Ganti Foto (Opsional, perlu logika upload file terpisah) --}}
+                    {{-- Tombol Ganti Foto (Opsional) --}}
                     <button
                         class="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow border hover:bg-gray-50 text-gray-600 cursor-not-allowed"
                         title="Fitur upload foto belum tersedia">
@@ -71,7 +71,8 @@
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-sm font-medium text-gray-700 mb-1">NIK (KTP)</label>
                             <input type="text" name="nik" value="{{ old('nik', $alumni->nik) }}"
-                                class="w-full rounded-lg border-gray-300 focus:ring-primary focus:border-primary @error('nik') border-red-500 @enderror">
+                                placeholder="3201xxxxxxxxxxxx"
+                                class="p-2 w-full rounded-lg border focus:ring-primary focus:border-primary @error('nik') border-red-500 @enderror">
                             @error('nik')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -81,7 +82,8 @@
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Email Pribadi</label>
                             <input type="email" name="email" value="{{ old('email', $alumni->email) }}"
-                                class="w-full rounded-lg border-gray-300 focus:ring-primary focus:border-primary @error('email') border-red-500 @enderror">
+                                placeholder="email@kamu.com"
+                                class="p-2 w-full rounded-lg border focus:ring-primary focus:border-primary @error('email') border-red-500 @enderror">
                             @error('email')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -90,27 +92,30 @@
                         {{-- NO HP --}}
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-sm font-medium text-gray-700 mb-1">No. Handphone / WA</label>
+
                             <input type="tel" name="no_hp" value="{{ old('no_hp', $alumni->no_hp) }}"
-                                class="w-full rounded-lg border-gray-300 focus:ring-primary focus:border-primary @error('no_hp') border-red-500 @enderror">
+                                class="p-2 w-full rounded-lg border focus:ring-primary focus:border-primary @error('no_hp') border-red-500 @enderror"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" inputmode="numeric"maxlength="15"
+                                placeholder="08xxxxxxxxxx">
+
                             @error('no_hp')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        {{-- LINKEDIN (Di-disable karena belum ada kolom di migrasi m_alumni) --}}
-                        {{-- Jika nanti sudah migrate kolom linkedin, hapus atribut disabled dan style bg-gray-100 --}}
+                        {{-- LINKEDIN --}}
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-sm font-medium text-gray-700 mb-1">URL LinkedIn (Opsional)</label>
                             <input type="url" name="linkedin" placeholder="Belum tersedia di database" disabled
-                                class="w-full rounded-lg border-gray-300 bg-gray-100 text-gray-500 cursor-not-allowed">
+                                class="p-2 w-full rounded-lg border bg-gray-100 text-gray-500 cursor-not-allowed">
                             <p class="text-xs text-gray-400 mt-1">*Fitur ini akan segera hadir</p>
                         </div>
 
                         {{-- ALAMAT DOMISILI --}}
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Domisili Saat Ini</label>
-                            <textarea name="alamat_domisili" rows="3"
-                                class="w-full rounded-lg border-gray-300 focus:ring-primary focus:border-primary @error('alamat_domisili') border-red-500 @enderror">{{ old('alamat_domisili', $alumni->alamat_domisili) }}</textarea>
+                            <textarea name="alamat_domisili" rows="3" placeholder="Jl. Mencari Cinta Abadi I"
+                                class="p-2 w-full rounded-lg border focus:ring-primary focus:border-primary @error('alamat_domisili') border-red-500 @enderror">{{ old('alamat_domisili', $alumni->alamat_domisili) }}</textarea>
                             @error('alamat_domisili')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -118,10 +123,10 @@
                     </div>
 
                     <div class="flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
-                        <button type="reset"
-                            class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <a href="{{ route('alumni.dashboard') }}"
+                            class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors inline-flex items-center justify-center">
                             Batal
-                        </button>
+                        </a>
                         <button type="submit"
                             class="px-6 py-2 bg-primary text-white font-medium rounded-lg hover:bg-blue-800 shadow-sm transition-all">
                             Simpan Perubahan
