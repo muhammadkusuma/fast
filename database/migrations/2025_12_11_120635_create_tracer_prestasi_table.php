@@ -33,13 +33,13 @@ return new class extends Migration
             $table->foreignId('id_alumni')->constrained('m_alumni')->onDelete('cascade');
             $table->year('tahun_tracer');
             $table->dateTime('tanggal_pengisian')->useCurrent();
-            
+
             $table->enum('status_aktivitas', [
                 'Bekerja (Full Time/Part Time)',
                 'Wiraswasta',
                 'Melanjutkan Pendidikan',
                 'Tidak Bekerja',
-                'Lainnya'
+                'Lainnya',
             ]);
 
             // Detail Pekerjaan (Nullable)
@@ -59,7 +59,7 @@ return new class extends Migration
         Schema::create('t_tracer_process', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_tracer_main')->constrained('t_tracer_main')->onDelete('cascade');
-            
+
             $table->enum('bulan_mulai_mencari', ['Sebelum Lulus', 'Sesudah Lulus']);
             $table->integer('waktu_tunggu_bulan');
             $table->integer('jumlah_lamaran')->default(0);
@@ -75,12 +75,12 @@ return new class extends Migration
 
             // Kita gunakan loop atau tulis manual. Manual lebih aman untuk dibaca.
             $fields = ['etika', 'keahlian_bidang', 'bahasa_inggris', 'teknologi_informasi', 'komunikasi', 'kerjasama_tim', 'pengembangan_diri'];
-            
-            foreach($fields as $field) {
+
+            foreach ($fields as $field) {
                 $table->tinyInteger($field . '_a')->nullable(); // Kampus
                 $table->tinyInteger($field . '_b')->nullable(); // Pekerjaan
             }
-            
+
             $table->timestamps();
         });
 
@@ -96,7 +96,7 @@ return new class extends Migration
             $table->tinyInteger('fasilitas_internet')->nullable();
             $table->tinyInteger('layanan_admin_akademik')->nullable();
             $table->tinyInteger('pusat_karir_kampus')->nullable();
-            
+
             $table->text('saran_perbaikan')->nullable();
             $table->timestamps();
         });
@@ -107,7 +107,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-       Schema::dropIfExists('t_tracer_evaluation');
+        Schema::dropIfExists('t_tracer_evaluation');
         Schema::dropIfExists('t_tracer_competence');
         Schema::dropIfExists('t_tracer_process');
         Schema::dropIfExists('t_tracer_main');

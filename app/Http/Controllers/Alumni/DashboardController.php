@@ -9,48 +9,43 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // 1. Ambil data Alumni yang sedang login
-        $alumni = Auth::guard('alumni')->user();
+        // 1. Ambil data alumni yang sedang login
+        // Asumsi: User login terhubung ke tabel m_alumni via relasi atau Auth custom
+        // Jika menggunakan Auth standar User, ambil data alumni berdasarkan ID user
+        $user = auth()->user();
+        // Contoh: $alumni = Alumni::where('email', $user->email)->first();
+        // Atau jika model User adalah Alumni:
+        $alumni = auth()->user();
 
-        // 2. Cek apakah sudah mengisi Tracer Study tahun ini
-        $sudahIsiTracer = TracerMain::where('id_alumni', $alumni->id)
-            ->where('tahun_tracer', date('Y'))
-            ->exists();
+        // 2. Tentukan kolom-kolom di tabel 'm_alumni' yang wajib diisi untuk dianggap lengkap
+        $columnsToCheck = [
+            'nim',
+            'nama_lengkap',
+            'nik', // Nullable di schema, jadi penting dicek
+            'jenis_kelamin',
+            'tahun_masuk',
+            'tahun_lulus',
+            'ipk',             // Nullable
+            'no_hp',           // Nullable
+            'email',           // Nullable
+            'alamat_domisili', // Nullable
+        ];
 
-                          // 3. Hitung Kelengkapan Data Profil (Logika Sederhana)
-                          // Sesuaikan kolom ini dengan tabel 'alumni' kamu
-        $totalField  = 5; // Misal: email, no_hp, alamat, nik, npwp
-        $filledField = 0;
-
-        if ($alumni->email) {
-            $filledField++;
+        // 3. Hitung berapa kolom yang sudah terisi
+        $filledCount = 0;
+        foreach ($columnsToCheck as $col) {
+            if (! empty($alumni->$col)) {
+                $filledCount++;
+            }
         }
 
-        if ($alumni->no_hp) {
-            $filledField++;
-        }
+        // 4. Hitung persentase
+        $totalColumns     = count($columnsToCheck);
+        $persentaseProfil = round(($filledCount / $totalColumns) * 100);
 
-        if ($alumni->alamat) {
-            $filledField++;
-        }
+        // 5. Cek Status Tracer (Contoh logika sederhana)
+        $sudahIsiTracer = $alumni->tracerMain()->exists();
 
-        if ($alumni->nik) {
-            $filledField++;
-        }
-
-        if ($alumni->npwp) {
-            $filledField++;
-        }
-        // Asumsi ada kolom npwp
-
-        $persentaseProfil = ($filledField / $totalField) * 100;
-
-        // 4. Kirim data ke View
-        return view('alumni.dashboard', [
-            'alumni'           => $alumni,
-            'sudahIsiTracer'   => $sudahIsiTracer,
-            'persentaseProfil' => round($persentaseProfil),
-            // 'prestasiCount' => $alumni->prestasi()->count() // Jika ada relasi prestasi
-        ]);
+        return view('alumni.dashboard', compact('alumni', 'persentaseProfil', 'sudahIsiTracer'));
     }
 }
