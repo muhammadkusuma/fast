@@ -25,12 +25,14 @@ class AuthController extends Controller
         $password = $request->input('password');
         $remember = $request->boolean('remember');
 
-        // LOGIC A: Cek apakah input adalah EMAIL? -> Maka Login ADMIN
+        // LOGIC A: Cek apakah input adalah EMAIL? -> Maka Login ADMIN (User Database)
         if (filter_var($identity, FILTER_VALIDATE_EMAIL)) {
             if (Auth::guard('web')->attempt(['email' => $identity, 'password' => $password], $remember)) {
                 $request->session()->regenerate();
-                // Redirect ke Dashboard Admin (atau Filament)
-                return redirect()->intended('/dashboard');
+
+                // === PERBAIKAN DI SINI ===
+                // Redirect ke route 'admin.dashboard' (URL: /custom-admin/dashboard)
+                return redirect()->intended(route('admin.dashboard'));
             }
         }
 
@@ -38,6 +40,8 @@ class AuthController extends Controller
         else {
             if (Auth::guard('alumni')->attempt(['nim' => $identity, 'password' => $password], $remember)) {
                 $request->session()->regenerate();
+
+                // Redirect ke Dashboard Alumni
                 return redirect()->intended(route('alumni.dashboard'));
             }
         }
