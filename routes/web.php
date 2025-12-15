@@ -1,10 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
-use App\Http\Controllers\Alumni\TracerController;
 
 // use App\Http\Controllers\Alumni\DashboardController;
 // use App\Http\Controllers\Alumni\ProfilController;
+use App\Http\Controllers\Admin\MasterDataController as MasterDataController;
+use App\Http\Controllers\Alumni\TracerController;
 use App\Http\Controllers\AuthController;
 
 /*
@@ -65,14 +66,19 @@ Route::middleware(['auth:alumni'])->prefix('alumni')->name('alumni.')->group(fun
 | 4. AREA ADMIN (Middleware: auth:web)
 |--------------------------------------------------------------------------
 */
+
 Route::middleware(['auth:web'])->prefix('custom-admin')->name('admin.')->group(function () {
 
-    // Dashboard Admin (Lihat Grafik & Pengumuman)
+    // 1. Dashboard & Pengumuman
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
-
-    // Simpan Pengumuman
     Route::post('/announcement', [AdminDashboard::class, 'storeAnnouncement'])->name('announcement.store');
-
-    // Hapus Pengumuman
     Route::delete('/announcement/{id}', [AdminDashboard::class, 'deleteAnnouncement'])->name('announcement.delete');
+
+    // 2. Master Data Management (BARU)
+    Route::prefix('master')->name('master.')->group(function () {
+        Route::get('/alumni', [MasterDataController::class, 'indexAlumni'])->name('alumni');
+        Route::get('/prodi', [MasterDataController::class, 'indexProdi'])->name('prodi');
+        Route::get('/fakultas', [MasterDataController::class, 'indexFakultas'])->name('fakultas');
+    });
+
 });
