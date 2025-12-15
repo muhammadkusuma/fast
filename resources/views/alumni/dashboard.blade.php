@@ -6,8 +6,9 @@
 @section('sidebar-menu')
     <p class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-4">Aktivitas</p>
 
+    {{-- Menu Biodata --}}
     <a href="{{ route('alumni.profil') }}"
-        class="flex items-center px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-primary rounded-lg transition-colors">
+        class="flex items-center px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-primary rounded-lg transition-colors {{ request()->routeIs('alumni.profil') ? 'bg-blue-50 text-primary font-semibold' : '' }}">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -15,32 +16,27 @@
         Biodata Saya
     </a>
 
+    {{-- Menu Tracer Study --}}
     @php
-        // Logika Cek Status Tracer (Langsung di View)
-        // Agar variabel ini tersedia meskipun kita sedang membuka halaman Profil atau lainnya
-        $statusTracer = false;
-
+        // Logika sederhana untuk link sidebar
+        $statusTracerSidebar = false;
         if (Auth::guard('alumni')->check()) {
-            $statusTracer = \App\Models\TracerMain::where('id_alumni', Auth::guard('alumni')->id())
+            $statusTracerSidebar = \App\Models\TracerMain::where('id_alumni', Auth::guard('alumni')->id())
                 ->where('tahun_tracer', date('Y'))
                 ->exists();
         }
     @endphp
 
-    <a href="{{ $statusTracer ? '#' : route('alumni.tracer.create') }}"
+    <a href="{{ $statusTracerSidebar ? '#' : route('alumni.tracer.create') }}"
         class="flex items-center px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-primary rounded-lg transition-colors {{ request()->routeIs('alumni.tracer.*') ? 'bg-blue-50 text-primary font-semibold' : '' }}">
-
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
             </path>
         </svg>
+        {{ $statusTracerSidebar ? 'Data Tracer Anda' : 'Isi Tracer Study' }}
 
-        {{-- Ubah Teks Menu --}}
-        {{ $statusTracer ? 'Data Tracer Anda' : 'Isi Tracer Study' }}
-
-        {{-- Opsional: Tambahkan Badge Centang jika sudah --}}
-        @if ($statusTracer)
+        @if ($statusTracerSidebar)
             <span class="ml-auto text-green-500">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -49,6 +45,7 @@
         @endif
     </a>
 
+    {{-- Menu Prestasi (Placeholder) --}}
     <a href="#"
         class="flex items-center px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-primary rounded-lg transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,27 +58,15 @@
 @endsection
 
 @section('content')
-    {{-- Notifikasi Flash Message (Opsional, jika ada redirect success/error) --}}
-    {{-- @if (session('success'))
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
-            <p>{{ session('success') }}</p>
-        </div>
-    @endif
-    @if (session('error'))
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
-            <p>{{ session('error') }}</p>
-        </div>
-    @endif --}}
 
+    {{-- HEADER SAMBUTAN --}}
     <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-l-4 border-primary">
         <div class="flex items-center justify-between">
             <div>
-                {{-- MENGAMBIL DATA NAMA ALUMNI --}}
                 <h1 class="text-2xl font-bold text-gray-800">Halo, {{ $alumni->nama ?? 'Alumni' }}! 👋</h1>
                 <p class="text-gray-600 mt-1">Selamat datang di Sistem Tracer Study UIN Suska Riau.</p>
             </div>
             <div class="hidden md:block">
-                {{-- MENGAMBIL TAHUN LULUS (Pastikan ada kolom tahun_lulus atau angkatan di tabel alumni) --}}
                 <span class="bg-blue-100 text-primary px-4 py-1 rounded-full text-sm font-semibold">
                     Alumni {{ $alumni->tahun_lulus ?? date('Y') }}
                 </span>
@@ -91,17 +76,15 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
-        {{-- CARD STATUS TRACER STUDY --}}
+        {{-- CARD 1: STATUS TRACER --}}
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 relative overflow-hidden group">
             <div
                 class="absolute right-0 top-0 mt-4 mr-4 w-12 h-12 {{ $sudahIsiTracer ? 'bg-green-100 text-green-500' : 'bg-red-100 text-red-500' }} rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                 @if ($sudahIsiTracer)
-                    {{-- Icon Checklist jika sudah --}}
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                 @else
-                    {{-- Icon X / Warning jika belum --}}
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -110,14 +93,12 @@
             </div>
 
             <h3 class="text-gray-500 text-sm font-medium uppercase tracking-wider">Status Tracer ({{ date('Y') }})</h3>
-
             <p class="text-2xl font-bold {{ $sudahIsiTracer ? 'text-green-600' : 'text-gray-800' }} mt-1">
                 {{ $sudahIsiTracer ? 'Sudah Mengisi' : 'Belum Mengisi' }}
             </p>
 
             <div class="mt-4">
                 @if (!$sudahIsiTracer)
-                    {{-- Link diarahkan ke route alumni.tracer.create --}}
                     <a href="{{ route('alumni.tracer.create') }}"
                         class="text-sm font-semibold text-red-500 hover:text-red-700 flex items-center">
                         Isi Sekarang <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,7 +118,7 @@
             </div>
         </div>
 
-        {{-- CARD KELENGKAPAN DATA --}}
+        {{-- CARD 2: KELENGKAPAN DATA --}}
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 relative overflow-hidden group">
             <div
                 class="absolute right-0 top-0 mt-4 mr-4 w-12 h-12 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -148,8 +129,7 @@
             </div>
             <h3 class="text-gray-500 text-sm font-medium uppercase tracking-wider">Kelengkapan Data</h3>
 
-            {{-- DATA PERSENTASE DARI CONTROLLER --}}
-            <p class="text-2xl font-bold text-gray-800 mt-1">{{ $persentaseProfil }}%</p>
+            <p class="text-2xl font-bold text-gray-800 mt-1">{{ number_format($persentaseProfil, 0) }}%</p>
 
             <div class="w-full bg-gray-200 rounded-full h-1.5 mt-4">
                 <div class="bg-yellow-500 h-1.5 rounded-full" style="width: {{ $persentaseProfil }}%"></div>
@@ -162,7 +142,7 @@
             @endif
         </div>
 
-        {{-- CARD PRESTASI --}}
+        {{-- CARD 3: PRESTASI --}}
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 relative overflow-hidden group">
             <div
                 class="absolute right-0 top-0 mt-4 mr-4 w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -174,55 +154,70 @@
             </div>
             <h3 class="text-gray-500 text-sm font-medium uppercase tracking-wider">Prestasi Anda</h3>
 
-            {{-- Jika belum ada fitur prestasi, biarkan hardcoded atau buat dinamis nanti --}}
-            <p class="text-2xl font-bold text-gray-800 mt-1">0 Prestasi</p>
+            {{-- Mengambil Jumlah Prestasi dari Relasi --}}
+            <p class="text-2xl font-bold text-gray-800 mt-1">{{ $alumni->prestasi->count() ?? 0 }} Prestasi</p>
 
             <div class="mt-4 flex gap-2">
-                {{-- Placeholder status --}}
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                    Belum ada data
-                </span>
+                @if (($alumni->prestasi->count() ?? 0) > 0)
+                    <span
+                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                        Terdata
+                    </span>
+                @else
+                    <span
+                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                        Belum ada data
+                    </span>
+                @endif
             </div>
         </div>
     </div>
 
-    {{-- BAGIAN JADWAL (Biasanya Static atau dari Table Config) --}}
+    {{-- BAGIAN PENGUMUMAN DARI DATABASE --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="font-bold text-gray-800">Info & Jadwal Tracer Study</h3>
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="font-bold text-gray-800">Papan Pengumuman & Informasi</h3>
+            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Terbaru</span>
         </div>
         <div class="p-6">
-            <ol class="relative border-l border-gray-200 ml-3">
-                <li class="mb-10 ml-6">
-                    <span
-                        class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">
-                        <svg class="w-3 h-3 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                    </span>
-                    <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900">Periode Pengisian Dibuka</h3>
-                    {{-- Contoh tanggal dinamis --}}
-                    <time class="block mb-2 text-sm font-normal leading-none text-gray-400">Tahun
-                        {{ date('Y') }}</time>
-                    <p class="mb-4 text-base font-normal text-gray-500">Seluruh alumni angkatan {{ date('Y') - 1 }} wajib
-                        mengisi kuesioner tracer study sebagai syarat legalisir ijazah.</p>
-                </li>
-                <li class="mb-10 ml-6">
-                    <span
-                        class="absolute flex items-center justify-center w-6 h-6 bg-gray-200 rounded-full -left-3 ring-8 ring-white">
-                        <svg class="w-3 h-3 text-gray-800" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                    </span>
-                    <h3 class="mb-1 text-lg font-semibold text-gray-900">Batas Akhir Pengisian</h3>
-                    <time class="block mb-2 text-sm font-normal leading-none text-gray-400">Desember
-                        {{ date('Y') }}</time>
-                </li>
-            </ol>
+            @if ($announcements->isEmpty())
+                <div class="text-center py-8 text-gray-500">
+                    <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p>Belum ada pengumuman saat ini.</p>
+                </div>
+            @else
+                <ol class="relative border-l border-gray-200 ml-3">
+                    @foreach ($announcements as $info)
+                        <li class="mb-10 ml-6">
+                            <span
+                                class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">
+                                <svg class="w-3 h-3 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </span>
+
+                            <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900">
+                                {{ $info->judul }}
+                            </h3>
+
+                            <time class="block mb-2 text-sm font-normal leading-none text-gray-400">
+                                {{ $info->created_at->format('d F Y, H:i') }} WIB
+                            </time>
+
+                            <div
+                                class="mb-4 text-base font-normal text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                {!! nl2br(e($info->isi)) !!}
+                            </div>
+                        </li>
+                    @endforeach
+                </ol>
+            @endif
         </div>
     </div>
 @endsection

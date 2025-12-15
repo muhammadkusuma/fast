@@ -1,11 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Alumni\TracerController;
-use App\Http\Controllers\AuthController;
 
 // use App\Http\Controllers\Alumni\DashboardController;
 // use App\Http\Controllers\Alumni\ProfilController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,8 +54,25 @@ Route::middleware(['auth:alumni'])->prefix('alumni')->name('alumni.')->group(fun
 |--------------------------------------------------------------------------
 | Biasanya dihandle oleh Filament, tapi jika mau custom route admin:
 */
+// Route::middleware(['auth:web'])->prefix('custom-admin')->name('admin.')->group(function () {
+//     Route::get('/dashboard', function () {
+//         return "Halaman Dashboard Admin Custom (Non-Filament)";
+//     })->name('dashboard');
+// });
+
+/*
+|--------------------------------------------------------------------------
+| 4. AREA ADMIN (Middleware: auth:web)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth:web'])->prefix('custom-admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return "Halaman Dashboard Admin Custom (Non-Filament)";
-    })->name('dashboard');
+
+    // Dashboard Admin (Lihat Grafik & Pengumuman)
+    Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
+
+    // Simpan Pengumuman
+    Route::post('/announcement', [AdminDashboard::class, 'storeAnnouncement'])->name('announcement.store');
+
+    // Hapus Pengumuman
+    Route::delete('/announcement/{id}', [AdminDashboard::class, 'deleteAnnouncement'])->name('announcement.delete');
 });
