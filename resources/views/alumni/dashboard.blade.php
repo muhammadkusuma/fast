@@ -18,7 +18,6 @@
 
     {{-- Menu Tracer Study --}}
     @php
-        // Logika sederhana untuk link sidebar
         $statusTracerSidebar = false;
         if (Auth::guard('alumni')->check()) {
             $statusTracerSidebar = \App\Models\TracerMain::where('id_alumni', Auth::guard('alumni')->id())
@@ -45,7 +44,7 @@
         @endif
     </a>
 
-    {{-- Menu Prestasi (Placeholder) --}}
+    {{-- Menu Prestasi --}}
     <a href="#"
         class="flex items-center px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-primary rounded-lg transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,7 +62,8 @@
     <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-l-4 border-primary">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Halo, {{ $alumni->nama ?? 'Alumni' }}! 👋</h1>
+                {{-- PERBAIKAN: Menggunakan nama_lengkap sesuai tabel m_alumni --}}
+                <h1 class="text-2xl font-bold text-gray-800">Halo, {{ $alumni->nama_lengkap ?? 'Alumni' }}! 👋</h1>
                 <p class="text-gray-600 mt-1">Selamat datang di Sistem Tracer Study UIN Suska Riau.</p>
             </div>
             <div class="hidden md:block">
@@ -129,6 +129,7 @@
             </div>
             <h3 class="text-gray-500 text-sm font-medium uppercase tracking-wider">Kelengkapan Data</h3>
 
+            {{-- Angka ini dihitung di Controller berdasarkan NIK, No HP, Email, Domisili --}}
             <p class="text-2xl font-bold text-gray-800 mt-1">{{ number_format($persentaseProfil, 0) }}%</p>
 
             <div class="w-full bg-gray-200 rounded-full h-1.5 mt-4">
@@ -154,7 +155,6 @@
             </div>
             <h3 class="text-gray-500 text-sm font-medium uppercase tracking-wider">Prestasi Anda</h3>
 
-            {{-- Mengambil Jumlah Prestasi dari Relasi --}}
             <p class="text-2xl font-bold text-gray-800 mt-1">{{ $alumni->prestasi->count() ?? 0 }} Prestasi</p>
 
             <div class="mt-4 flex gap-2">
@@ -173,7 +173,7 @@
         </div>
     </div>
 
-    {{-- BAGIAN PENGUMUMAN DARI DATABASE --}}
+    {{-- BAGIAN PENGUMUMAN --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
         <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
             <h3 class="font-bold text-gray-800">Papan Pengumuman & Informasi</h3>
@@ -201,15 +201,12 @@
                                         clip-rule="evenodd"></path>
                                 </svg>
                             </span>
-
                             <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900">
                                 {{ $info->judul }}
                             </h3>
-
                             <time class="block mb-2 text-sm font-normal leading-none text-gray-400">
                                 {{ $info->created_at->format('d F Y, H:i') }} WIB
                             </time>
-
                             <div
                                 class="mb-4 text-base font-normal text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100">
                                 {!! nl2br(e($info->isi)) !!}

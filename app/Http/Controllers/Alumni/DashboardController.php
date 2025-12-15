@@ -3,7 +3,6 @@ namespace App\Http\Controllers\Alumni;
 
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
-// Import Model
 use App\Models\TracerMain;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,43 +18,40 @@ class DashboardController extends Controller
             ->where('tahun_tracer', date('Y'))
             ->exists();
 
-        // 2. Hitung Persentase Profil (Sederhana)
-        // Cek kolom wajib: nik, npwp, no_hp, alamat, email
+        // 2. Hitung Persentase Profil (Berdasarkan Migrasi m_alumni)
+        // Kolom yang dicek: nik, no_hp, email, alamat_domisili
         $filled     = 0;
-        $totalField = 5;
-        if ($alumni->nik) {
+        $totalField = 4; // Jumlah kolom yang dicek
+
+        if (! empty($alumni->nik)) {
             $filled++;
         }
 
-        if ($alumni->npwp) {
+        if (! empty($alumni->no_hp)) {
             $filled++;
         }
 
-        if ($alumni->no_hp) {
+        if (! empty($alumni->email)) {
             $filled++;
         }
 
-        if ($alumni->alamat) {
-            $filled++;
-        }
-
-        if ($alumni->email) {
+        if (! empty($alumni->alamat_domisili)) {
             $filled++;
         }
 
         $persentaseProfil = ($filled / $totalField) * 100;
 
-        // 3. AMBIL PENGUMUMAN DARI DB (Tambahan Baru)
+        // 3. Ambil Pengumuman
         $announcements = Announcement::where('is_active', true)
             ->latest()
-            ->take(5) // Ambil 5 terbaru saja
+            ->take(5)
             ->get();
 
         return view('alumni.dashboard', compact(
             'alumni',
             'sudahIsiTracer',
             'persentaseProfil',
-            'announcements' // Kirim ke view
+            'announcements'
         ));
     }
 }
