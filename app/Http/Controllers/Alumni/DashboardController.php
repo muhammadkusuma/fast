@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Alumni;
 
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
-use App\Models\TracerMain;
+use App\Models\TracerStudy; // UBAH: Gunakan Model TracerStudy (bukan TracerMain)
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -14,30 +14,22 @@ class DashboardController extends Controller
         $alumni   = Auth::guard('alumni')->user();
 
         // 1. Cek Status Tracer (Sudah isi atau belum tahun ini)
-        $sudahIsiTracer = TracerMain::where('id_alumni', $idAlumni)
-            ->where('tahun_tracer', date('Y'))
+        // PERBAIKAN:
+        // - Menggunakan model TracerStudy
+        // - Menggunakan kolom 'user_id' (sesuai migrasi baru)
+        // - Menggunakan 'created_at' untuk cek tahun (karena tidak ada kolom tahun_tracer di tabel baru)
+        $sudahIsiTracer = TracerStudy::where('user_id', $idAlumni)
+            ->whereYear('created_at', date('Y'))
             ->exists();
 
         // 2. Hitung Persentase Profil (Berdasarkan Migrasi m_alumni)
-        // Kolom yang dicek: nik, no_hp, email, alamat_domisili
         $filled     = 0;
-        $totalField = 4; // Jumlah kolom yang dicek
+        $totalField = 4;
 
-        if (! empty($alumni->nik)) {
-            $filled++;
-        }
-
-        if (! empty($alumni->no_hp)) {
-            $filled++;
-        }
-
-        if (! empty($alumni->email)) {
-            $filled++;
-        }
-
-        if (! empty($alumni->alamat_domisili)) {
-            $filled++;
-        }
+        if (! empty($alumni->nik)) {$filled++;}
+        if (! empty($alumni->no_hp)) {$filled++;}
+        if (! empty($alumni->email)) {$filled++;}
+        if (! empty($alumni->alamat_domisili)) {$filled++;}
 
         $persentaseProfil = ($filled / $totalField) * 100;
 

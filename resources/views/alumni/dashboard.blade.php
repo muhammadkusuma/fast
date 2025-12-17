@@ -20,8 +20,9 @@
     @php
         $statusTracerSidebar = false;
         if (Auth::guard('alumni')->check()) {
-            $statusTracerSidebar = \App\Models\TracerMain::where('id_alumni', Auth::guard('alumni')->id())
-                ->where('tahun_tracer', date('Y'))
+            // PERBAIKAN: Menggunakan TracerStudy, kolom user_id, dan cek tahun dari created_at
+            $statusTracerSidebar = \App\Models\TracerStudy::where('user_id', Auth::guard('alumni')->id())
+                ->whereYear('created_at', date('Y'))
                 ->exists();
         }
     @endphp
@@ -145,6 +146,7 @@
 
         {{-- CARD 3: PRESTASI --}}
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 relative overflow-hidden group">
+            {{-- Icon Tetap Ada --}}
             <div
                 class="absolute right-0 top-0 mt-4 mr-4 w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -153,24 +155,23 @@
                     </path>
                 </svg>
             </div>
+
             <h3 class="text-gray-500 text-sm font-medium uppercase tracking-wider">Prestasi Anda</h3>
 
-            {{-- UPDATE: Diubah jadi manual 0 karena tabel dihapus --}}
-            <p class="text-2xl font-bold text-gray-800 mt-1">0 Prestasi</p>
+            {{-- UBAH: Teks Jumlah menjadi status Segera Hadir --}}
+            <p class="text-2xl font-bold text-gray-800 mt-1">Segera Hadir</p>
 
             <div class="mt-4 flex gap-2">
-                {{-- UPDATE: If diubah menjadi false agar selalu lari ke else --}}
-                @if (false)
-                    <span
-                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                        Terdata
-                    </span>
-                @else
-                    <span
-                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                        Belum ada data
-                    </span>
-                @endif
+                {{-- UBAH: Badge status kuning (Warning/Development) --}}
+                <span
+                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                        </path>
+                    </svg>
+                    Dalam Pengembangan
+                </span>
             </div>
         </div>
     </div>
