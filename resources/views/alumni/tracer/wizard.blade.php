@@ -98,7 +98,7 @@
              ======================================================================== --}}
             <div x-show="currentStep === 1" x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 transform translate-y-4"
-                x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-4xl mx-auto pt-5">
+                x-transition:enter-end="opacity-100 transform translate-y-0" class="p-8">
 
                 <div class="mb-8 border-l-4 border-blue-600 pl-4">
                     <h2 class="text-2xl font-bold text-gray-800">A. Data Pribadi</h2>
@@ -291,7 +291,7 @@
              ======================================================================== --}}
             <div x-show="currentStep === 2" x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 transform translate-y-4"
-                x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-4xl mx-auto pt-5">
+                x-transition:enter-end="opacity-100 transform translate-y-0" class="p-8">
 
                 <div x-show="formData.status_bekerja !== 'Sudah Bekerja'"
                     class="flex flex-col items-center justify-center py-16 px-4 text-center bg-white rounded-xl border-2 border-dashed border-gray-300">
@@ -409,7 +409,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Range Gaji/Bulan <span
                                         class="text-red-500">*</span></label>
                                 <select name="q19_penghasilan" x-model="formData.q19_penghasilan"
-                                    class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                    class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
                                     <option value="">-- Pilih Range --</option>
                                     <option value="< 3 Juta">
                                         < Rp 3 Juta</option>
@@ -423,7 +423,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Status Kepegawaian <span
                                         class="text-red-500">*</span></label>
                                 <select name="q20_status_pekerjaan" x-model="formData.q20_status_pekerjaan"
-                                    class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                    class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
                                     <option value="">-- Pilih Status --</option>
                                     <option value="Tetap">Tetap</option>
                                     <option value="Kontrak">Kontrak</option>
@@ -436,7 +436,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Kesesuaian Bidang Studi <span
                                         class="text-red-500">*</span></label>
                                 <select name="q21_hubungan" x-model="formData.q21_hubungan"
-                                    class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                    class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
                                     <option value="">-- Pilih Tingkat --</option>
                                     <option value="Sangat Erat">Sangat Erat</option>
                                     <option value="Erat">Erat</option>
@@ -543,7 +543,7 @@
              ======================================================================== --}}
             <div x-show="currentStep === 3" x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 transform translate-y-4"
-                x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-4xl mx-auto pt-5">
+                x-transition:enter-end="opacity-100 transform translate-y-0" class="p-8">
 
                 <div class="mb-8 border-l-4 border-purple-600 pl-4">
                     <h2 class="text-2xl font-bold text-gray-800">C. Pengalaman Belajar</h2>
@@ -568,7 +568,7 @@
                                     <span class="text-red-500">*</span></label>
                                 <div class="relative">
                                     <select name="q33_tempat_tinggal" x-model="formData.q33_tempat_tinggal"
-                                        class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 cursor-pointer">
+                                        class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 cursor-pointer">
                                         <option value="">-- Pilih Tempat Tinggal --</option>
                                         <option value="Bersama Orang Tua">Bersama Orang Tua</option>
                                         <option value="Kos">Kos / Sewa</option>
@@ -581,7 +581,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Sumber Biaya Kuliah <span
                                         class="text-red-500">*</span></label>
                                 <select name="q34_sumber_biaya" x-model="formData.q34_sumber_biaya"
-                                    class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 cursor-pointer">
+                                    class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 cursor-pointer">
                                     <option value="">-- Pilih Sumber Biaya --</option>
                                     <option value="Biaya Sendiri / Keluarga">Biaya Sendiri / Keluarga</option>
                                     <option value="Beasiswa ADIK">Beasiswa ADIK</option>
@@ -737,7 +737,7 @@
              ======================================================================== --}}
             <div x-show="currentStep === 4" x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 transform translate-y-4"
-                x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-4xl mx-auto">
+                x-transition:enter-end="opacity-100 transform translate-y-0" class="p-8">
 
                 <div class="mb-8 border-l-4 border-green-500 pl-4">
                     <h2 class="text-2xl font-bold text-gray-800">D. Kompetensi & Penutup</h2>
@@ -801,10 +801,6 @@
                                         </div>
                                     </label>
                                 @endfor
-                            </div>
-                            <div class="flex justify-between text-xs text-gray-400 mt-2 px-1">
-                                <span>Sangat Buruk</span>
-                                <span>Sangat Baik</span>
                             </div>
                         </div>
 
