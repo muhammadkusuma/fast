@@ -2,14 +2,14 @@
 namespace App\Http\Controllers\Alumni;
 
 use App\Http\Controllers\Controller;
-use App\Models\TracerStudy;
+use App\Models\TracerStudy; // Pastikan ini ada
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TracerController extends Controller
 {
     /**
-     * Menampilkan Form Wizard
+     * Menampilkan Form Wizard (Logic Redirect)
      */
     public function index()
     {
@@ -26,12 +26,17 @@ class TracerController extends Controller
         return view('alumni.tracer.wizard');
     }
 
+    /**
+     * Menampilkan Form Wizard (Route /tracer/isi)
+     */
     public function create()
     {
-        // Cek apakah alumni sudah pernah mengisi tracer tahun ini?
+        // PERBAIKAN: Gunakan TracerStudy agar konsisten dengan store() dan index()
         $alumniId      = Auth::guard('alumni')->id();
-        $alreadyFilled = TracerMain::where('id_alumni', $alumniId)
-            ->where('tahun_tracer', date('Y'))
+        
+        // Cek menggunakan model TracerStudy (bukan TracerMain)
+        $alreadyFilled = TracerStudy::where('user_id', $alumniId)
+            ->whereYear('created_at', date('Y'))
             ->exists();
 
         if ($alreadyFilled) {
@@ -39,8 +44,6 @@ class TracerController extends Controller
                 ->with('info', 'Anda sudah mengisi Tracer Study tahun ini.');
         }
 
-        // Tampilkan view wizard
-        // Pastikan file view ada di resources/views/alumni/tracer/wizard.blade.php
         return view('alumni.tracer.wizard');
     }
 
@@ -50,7 +53,6 @@ class TracerController extends Controller
     public function store(Request $request)
     {
         // 1. Validasi Data
-        // Kita gunakan validasi conditional (required_if) untuk bagian pekerjaan
         $validatedData = $request->validate([
             // --- STEP 1: Data Pribadi ---
             'q1_nama'              => 'required|string',
@@ -67,7 +69,7 @@ class TracerController extends Controller
             'q11_jenis_kelamin'    => 'required',
             'status_bekerja'       => 'required|string',
 
-            // --- STEP 2: Pekerjaan (Wajib JIKA status_bekerja = Sudah Bekerja) ---
+            // --- STEP 2: Pekerjaan ---
             'q12_jenis_perusahaan' => 'required_if:status_bekerja,Sudah Bekerja',
             'q12a_lainnya'         => 'nullable',
             'q13a_nama_kantor'     => 'required_if:status_bekerja,Sudah Bekerja',
@@ -80,7 +82,7 @@ class TracerController extends Controller
             'q21_hubungan'         => 'required_if:status_bekerja,Sudah Bekerja',
             'is_first_job'         => 'required_if:status_bekerja,Sudah Bekerja',
 
-            // Sub-step: Riwayat Pekerjaan Pertama (Wajib JIKA is_first_job = Tidak)
+            // Sub-step: Pekerjaan Pertama
             'q25_kantor_pertama'   => 'required_if:is_first_job,Tidak',
             'q26_alasan_berhenti'  => 'nullable',
             'q28_gaji_pertama'     => 'nullable',
@@ -93,29 +95,20 @@ class TracerController extends Controller
             'q37_kursus'           => 'required',
             'q37a_nama_kursus'     => 'required_if:q37_kursus,Ya',
 
-            // Matriks Evaluasi Pembelajaran (q38a - q38f) - Wajib diisi (1-5)
-            'q38a'                 => 'required|integer',
-            'q38b'                 => 'required|integer',
-            'q38c'                 => 'required|integer',
-            'q38d'                 => 'required|integer',
-            'q38e'                 => 'required|integer',
-            'q38f'                 => 'required|integer',
+            // Matriks Evaluasi Pembelajaran
+            'q38a' => 'required|integer', 'q38b' => 'required|integer', 'q38c' => 'required|integer',
+            'q38d' => 'required|integer', 'q38e' => 'required|integer', 'q38f' => 'required|integer',
 
-            // Matriks Fasilitas (q40a - q40k)
-            'q40a'                 => 'required|integer',
-            'q40b'                 => 'required|integer',
-            'q40c'                 => 'required|integer',
-            'q40d'                 => 'required|integer',
-            'q40e'                 => 'required|integer',
-            'q40g'                 => 'required|integer',
-            'q40k'                 => 'required|integer',
+            // Matriks Fasilitas
+            'q40a' => 'required|integer', 'q40b' => 'required|integer', 'q40c' => 'required|integer',
+            'q40d' => 'required|integer', 'q40e' => 'required|integer', 'q40g' => 'required|integer',
+            'q40k' => 'required|integer',
 
             // --- STEP 4: Kompetensi ---
-            // Loop validasi untuk q42a - q42o (Hardskill, dll)
-            'q42a'                 => 'required|integer', 'q42b' => 'required|integer', 'q42c' => 'required|integer',
-            'q42d'                 => 'required|integer', 'q42e' => 'required|integer', 'q42f' => 'required|integer',
-            'q42i'                 => 'required|integer', 'q42l' => 'required|integer', 'q42m' => 'required|integer',
-            'q42n'                 => 'required|integer', 'q42o' => 'required|integer',
+            'q42a' => 'required|integer', 'q42b' => 'required|integer', 'q42c' => 'required|integer',
+            'q42d' => 'required|integer', 'q42e' => 'required|integer', 'q42f' => 'required|integer',
+            'q42i' => 'required|integer', 'q42l' => 'required|integer', 'q42m' => 'required|integer',
+            'q42n' => 'required|integer', 'q42o' => 'required|integer',
 
             // Penutup
             'q45_bahasa'           => 'required|integer',
@@ -124,12 +117,10 @@ class TracerController extends Controller
             'q49_prodi'            => 'required',
             'q50_alasan_prodi'     => 'required_if:q49_prodi,Tidak',
 
-            // Field tambahan dari form (hidden input fakultas)
             'fakultas'             => 'nullable|string',
         ]);
 
         // 2. Tambahkan User ID
-        // Pastikan menggunakan guard 'alumni' karena di view Anda menggunakan Auth::guard('alumni')
         $validatedData['user_id'] = Auth::guard('alumni')->id();
 
         // 3. Simpan ke Database
