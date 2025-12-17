@@ -264,7 +264,7 @@
                     </div>
 
                     <div class="mt-8">
-                        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-1 shadow-lg">
+                        <div class="border border-gray-300 rounded-xl p-1 shadow-lg">
                             <div class="bg-white rounded-lg p-6">
                                 <label class="block text-lg font-bold text-gray-800 mb-2">
                                     Status Saat Ini <span class="text-red-500">*</span>
@@ -273,7 +273,7 @@
                                     saat ini untuk menentukan pertanyaan selanjutnya.</p>
 
                                 <select name="status_bekerja" x-model="formData.status_bekerja"
-                                    class="block w-full text-lg py-3 px-4 border-2 border-blue-100 bg-blue-50 rounded-lg text-blue-900 focus:ring-blue-500 focus:border-blue-500 transition cursor-pointer">
+                                    class="block w-full text-md py-3 px-4 border-2 border-blue-100 bg-blue-50 rounded-lg text-blue-900 focus:ring-blue-500 focus:border-blue-500 transition cursor-pointer">
                                     <option value="">-- Pilih Status --</option>
                                     <option value="Sudah Bekerja">Sudah Bekerja / Wiraswasta</option>
                                     <option value="Belum Bekerja">Belum Bekerja / Sedang Mencari</option>
@@ -289,165 +289,252 @@
             {{-- ========================================================================
              STEP 2: PEKERJAAN (SECTION B) - Only if 'Sudah Bekerja'
              ======================================================================== --}}
-            <div x-show="currentStep === 2" x-transition.opacity class="p-8 space-y-6">
+            <div x-show="currentStep === 2" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform translate-y-4"
+                x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-4xl mx-auto pt-5">
 
-                {{-- Logic Skip --}}
-                <div x-show="formData.status_bekerja !== 'Sudah Bekerja'" class="text-center py-10">
-                    <div class="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                <div x-show="formData.status_bekerja !== 'Sudah Bekerja'"
+                    class="flex flex-col items-center justify-center py-16 px-4 text-center bg-white rounded-xl border-2 border-dashed border-gray-300">
+                    <div class="bg-gray-50 rounded-full p-6 mb-6 shadow-sm">
+                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-lg font-medium text-gray-900">Langkah ini dilewati</h3>
-                    <p class="text-gray-500">Karena Anda belum bekerja, silakan lanjut ke langkah berikutnya.</p>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Langkah ini dilewati</h3>
+                    <p class="text-gray-500 max-w-md mx-auto">Berdasarkan status Anda, bagian detail pekerjaan tidak perlu
+                        diisi. Silakan klik tombol <b>"Lanjut"</b> di bawah.</p>
                 </div>
 
-                {{-- Form Pekerjaan --}}
-                <div x-show="formData.status_bekerja === 'Sudah Bekerja'" class="space-y-6">
+                <div x-show="formData.status_bekerja === 'Sudah Bekerja'" class="space-y-8">
+
                     <div class="border-l-4 border-orange-500 pl-4">
-                        <h2 class="text-xl font-bold text-gray-800">B. Pekerjaan Saat Ini</h2>
-                        <p class="text-sm text-gray-500">Detail instansi atau usaha Anda.</p>
+                        <h2 class="text-2xl font-bold text-gray-800">B. Pekerjaan Saat Ini</h2>
+                        <p class="text-gray-500 mt-1">Mohon lengkapi detail instansi tempat Anda bekerja saat ini.</p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {{-- Jenis Instansi --}}
-                        <div class="md:col-span-2">
-                            <label class="label">Jenis Instansi / Perusahaan <span class="text-red-500">*</span></label>
-                            <select name="q12_jenis_perusahaan" x-model="formData.q12_jenis_perusahaan"
-                                class="input-field">
-                                <option value="">-- Pilih --</option>
-                                <option value="Instansi Pemerintah">Instansi Pemerintah</option>
-                                <option value="BUMN/BUMD">BUMN/BUMD</option>
-                                <option value="Swasta Nasional">Institusi/Swasta Nasional</option>
-                                <option value="Swasta Multinasional">Institusi/Swasta Multinasional</option>
-                                <option value="Wiraswasta">Wiraswasta</option>
-                                <option value="Lainnya">Lainnya</option>
-                            </select>
-                            {{-- Input Lainnya --}}
-                            <div x-show="formData.q12_jenis_perusahaan === 'Lainnya'" class="mt-2">
-                                <input type="text" name="q12a_lainnya" x-model="formData.q12a_lainnya"
-                                    class="input-field" placeholder="Sebutkan jenis instansi...">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6">
+                        <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Profil Instansi</h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Instansi / Perusahaan
+                                    <span class="text-red-500">*</span></label>
+                                <select name="q12_jenis_perusahaan" x-model="formData.q12_jenis_perusahaan"
+                                    class="p-3 w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                    <option value="">-- Pilih Jenis Instansi --</option>
+                                    <option value="Instansi Pemerintah">Instansi Pemerintah (PNS/Non-PNS)</option>
+                                    <option value="BUMN/BUMD">BUMN / BUMD</option>
+                                    <option value="Swasta Nasional">Perusahaan Swasta Nasional</option>
+                                    <option value="Swasta Multinasional">Perusahaan Multinasional</option>
+                                    <option value="Wiraswasta">Wiraswasta / Pemilik Usaha</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+
+                                <div x-show="formData.q12_jenis_perusahaan === 'Lainnya'" x-transition class="mt-3">
+                                    <input type="text" name="q12a_lainnya" x-model="formData.q12a_lainnya"
+                                        class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 bg-gray-50"
+                                        placeholder="Sebutkan jenis instansi Anda...">
+                                </div>
                             </div>
-                        </div>
 
-                        {{-- Nama & Detail --}}
-                        <div>
-                            <label class="label">Nama Perusahaan / Kantor <span class="text-red-500">*</span></label>
-                            <input type="text" name="q13a_nama_kantor" x-model="formData.q13a_nama_kantor"
-                                class="input-field">
-                        </div>
-                        <div>
-                            <label class="label">Tahun Mulai Bekerja <span class="text-red-500">*</span></label>
-                            <input type="number" name="q15_tahun_masuk" x-model="formData.q15_tahun_masuk"
-                                class="input-field" placeholder="2024">
-                        </div>
-
-                        {{-- Pimpinan --}}
-                        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded border">
-                            <div class="md:col-span-3">
-                                <p class="text-xs font-bold text-gray-500 uppercase">Data Pimpinan (Atasan Langsung)</p>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Perusahaan / Kantor <span
+                                        class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                        </svg>
+                                    </div>
+                                    <input type="text" name="q13a_nama_kantor" x-model="formData.q13a_nama_kantor"
+                                        class="p-2 pl-10 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"
+                                        placeholder="PT. Mencari Cinta Sejati">
+                                </div>
                             </div>
                             <div>
-                                <label class="label">Nama Pimpinan</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Mulai Bekerja <span
+                                        class="text-red-500">*</span></label>
+                                <input type="text" name="q15_tahun_masuk" x-model="formData.q15_tahun_masuk"
+                                    class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"
+                                    placeholder="Contoh: 2023">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-xl border border-gray-200 p-6">
+                        <div class="flex items-start gap-3 mb-4">
+                            <div class="bg-orange-100 p-2 rounded-lg text-orange-600">
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">Data Pimpinan (Atasan Langsung)</h3>
+                                <p class="text-sm text-gray-500">Data ini digunakan untuk survey kepuasan pengguna lulusan.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Nama
+                                    Pimpinan</label>
                                 <input type="text" name="q13b_pimpinan" x-model="formData.q13b_pimpinan"
-                                    class="input-field">
+                                    class="p-2 w-full rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-orange-500">
                             </div>
                             <div>
-                                <label class="label">Email Pimpinan</label>
+                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Email
+                                    Pimpinan</label>
                                 <input type="email" name="q13c_email_pimpinan" x-model="formData.q13c_email_pimpinan"
-                                    class="input-field">
+                                    class="p-2 w-full rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-orange-500">
                             </div>
                             <div>
-                                <label class="label">No HP Pimpinan</label>
+                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">No. HP
+                                    Pimpinan</label>
                                 <input type="text" name="q16_telp_pimpinan" x-model="formData.q16_telp_pimpinan"
-                                    class="input-field">
+                                    class="p-2 w-full rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-orange-500">
                             </div>
-                        </div>
-
-                        {{-- Gaji & Keselarasan --}}
-                        <div>
-                            <label class="label">Rata-rata Penghasilan / Bulan <span
-                                    class="text-red-500">*</span></label>
-                            <select name="q19_penghasilan" x-model="formData.q19_penghasilan" class="input-field">
-                                <option value="">-- Pilih Range --</option>
-                                <option value="< 3 Juta">
-                                    < 3 Juta</option>
-                                <option value="3 - 5 Juta">3 - 5 Juta</option>
-                                <option value="5 - 10 Juta">5 - 10 Juta</option>
-                                <option value="> 10 Juta">> 10 Juta</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="label">Hubungan Pekerjaan dgn Prodi <span class="text-red-500">*</span></label>
-                            <select name="q21_hubungan" x-model="formData.q21_hubungan" class="input-field">
-                                <option value="">-- Pilih --</option>
-                                <option value="Sangat Erat">Sangat Erat</option>
-                                <option value="Erat">Erat</option>
-                                <option value="Cukup Erat">Cukup Erat</option>
-                                <option value="Kurang Erat">Kurang Erat</option>
-                                <option value="Tidak Sama Sekali">Tidak Sama Sekali</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="label">Status Pekerjaan <span class="text-red-500">*</span></label>
-                            <select name="q20_status_pekerjaan" x-model="formData.q20_status_pekerjaan"
-                                class="input-field">
-                                <option value="">-- Pilih --</option>
-                                <option value="Tetap">Tetap (PNS/Swasta)</option>
-                                <option value="Kontrak">Kontrak</option>
-                                <option value="Honorer">Honorer</option>
-                                <option value="Self Employed">Wiraswasta / Self Employed</option>
-                            </select>
                         </div>
                     </div>
 
-                    {{-- LOGIC BLOCK: RIWAYAT PEKERJAAN PERTAMA --}}
-                    <div class="mt-8 border-t border-gray-200 pt-6">
-                        <label class="label text-base">Apakah ini pekerjaan pertama Anda setelah lulus? <span
-                                class="text-red-500">*</span></label>
-                        <div class="flex gap-6 mt-2">
-                            <label class="inline-flex items-center">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 border-b pb-4 mb-4">Detail Pekerjaan</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Range Gaji/Bulan <span
+                                        class="text-red-500">*</span></label>
+                                <select name="q19_penghasilan" x-model="formData.q19_penghasilan"
+                                    class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                    <option value="">-- Pilih Range --</option>
+                                    <option value="< 3 Juta">
+                                        < Rp 3 Juta</option>
+                                    <option value="3 - 5 Juta">Rp 3 - 5 Juta</option>
+                                    <option value="5 - 10 Juta">Rp 5 - 10 Juta</option>
+                                    <option value="> 10 Juta">> Rp 10 Juta</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Status Kepegawaian <span
+                                        class="text-red-500">*</span></label>
+                                <select name="q20_status_pekerjaan" x-model="formData.q20_status_pekerjaan"
+                                    class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                    <option value="">-- Pilih Status --</option>
+                                    <option value="Tetap">Tetap</option>
+                                    <option value="Kontrak">Kontrak</option>
+                                    <option value="Honorer">Honorer</option>
+                                    <option value="Self Employed">Wiraswasta / Self Employed</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Kesesuaian Bidang Studi <span
+                                        class="text-red-500">*</span></label>
+                                <select name="q21_hubungan" x-model="formData.q21_hubungan"
+                                    class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                    <option value="">-- Pilih Tingkat --</option>
+                                    <option value="Sangat Erat">Sangat Erat</option>
+                                    <option value="Erat">Erat</option>
+                                    <option value="Cukup Erat">Cukup Erat</option>
+                                    <option value="Kurang Erat">Kurang Erat</option>
+                                    <option value="Tidak Sama Sekali">Tidak Sama Sekali</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <label class="block text-lg font-bold text-gray-800 mb-3">Apakah ini pekerjaan pertama Anda setelah
+                            lulus? <span class="text-red-500">*</span></label>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <label class="cursor-pointer relative">
                                 <input type="radio" name="is_first_job" value="Ya" x-model="formData.is_first_job"
-                                    class="text-green-600 focus:ring-green-500">
-                                <span class="ml-2 font-medium">Ya, ini pekerjaan pertama</span>
+                                    class="peer sr-only">
+                                <div
+                                    class="p-4 rounded-xl border-2 border-gray-200 hover:border-green-400 hover:bg-green-50 peer-checked:border-green-500 peer-checked:bg-green-50 transition duration-200 flex flex-col items-center">
+                                    <span class="text-2xl mb-1">👍</span>
+                                    <span class="font-bold text-gray-700 peer-checked:text-green-700">Ya, Pertama</span>
+                                </div>
+                                <div class="absolute top-2 right-2 hidden peer-checked:block text-green-600">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
                             </label>
-                            <label class="inline-flex items-center">
+
+                            <label class="cursor-pointer relative">
                                 <input type="radio" name="is_first_job" value="Tidak" x-model="formData.is_first_job"
-                                    class="text-red-600 focus:ring-red-500">
-                                <span class="ml-2 font-medium">Tidak</span>
+                                    class="peer sr-only">
+                                <div
+                                    class="p-4 rounded-xl border-2 border-gray-200 hover:border-orange-400 hover:bg-orange-50 peer-checked:border-orange-500 peer-checked:bg-orange-50 transition duration-200 flex flex-col items-center">
+                                    <span class="text-2xl mb-1">💼</span>
+                                    <span class="font-bold text-gray-700 peer-checked:text-orange-700">Tidak, Pindah
+                                        Kerja</span>
+                                </div>
+                                <div class="absolute top-2 right-2 hidden peer-checked:block text-orange-600">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
                             </label>
                         </div>
 
-                        {{-- Form Pekerjaan Pertama (Hidden if Yes) --}}
-                        <div x-show="formData.is_first_job === 'Tidak'" x-transition
-                            class="mt-6 bg-orange-50 p-6 rounded-lg border border-orange-200">
-                            <h4 class="font-bold text-gray-800 mb-4 border-b border-orange-200 pb-2">Riwayat Pekerjaan
-                                Pertama</h4>
+                        <div x-show="formData.is_first_job === 'Tidak'"
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0 -translate-y-2"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            class="bg-orange-50 rounded-xl border border-orange-200 p-6 relative mt-4">
+
+                            <div
+                                class="absolute -top-3 left-3/4 w-6 h-6 bg-orange-50 border-t border-l border-orange-200 transform rotate-45">
+                            </div>
+
+                            <h4 class="font-bold text-orange-800 mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Riwayat Pekerjaan Pertama
+                            </h4>
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="label">Nama Kantor Pertama</label>
+                                <div class="md:col-span-2">
+                                    <label class="label text-orange-900">Nama Kantor Pertama</label>
                                     <input type="text" name="q25_kantor_pertama" x-model="formData.q25_kantor_pertama"
-                                        class="input-field">
+                                        class="p-2 w-full rounded-lg border border-orange-300 focus:border-orange-500 focus:ring-orange-500 bg-white">
                                 </div>
                                 <div>
-                                    <label class="label">Alasan Berhenti/Pindah</label>
+                                    <label class="label text-orange-900">Alasan Berhenti/Pindah</label>
                                     <input type="text" name="q26_alasan_berhenti"
-                                        x-model="formData.q26_alasan_berhenti" class="input-field">
+                                        x-model="formData.q26_alasan_berhenti"
+                                        class="p-2 w-full rounded-lg border border-orange-300 focus:border-orange-500 focus:ring-orange-500 bg-white"
+                                        placeholder="Cth: Mendapat tawaran lebih baik">
                                 </div>
                                 <div>
-                                    <label class="label">Gaji Pertama</label>
+                                    <label class="label text-orange-900">Gaji Awal (Saat itu)</label>
                                     <select name="q28_gaji_pertama" x-model="formData.q28_gaji_pertama"
-                                        class="input-field">
+                                        class="p-2 w-full rounded-lg border border-orange-300 focus:border-orange-500 focus:ring-orange-500 bg-white">
                                         <option value="">-- Pilih Range --</option>
                                         <option value="< 3 Juta">
-                                            < 3 Juta</option>
-                                        <option value="3 - 5 Juta">3 - 5 Juta</option>
+                                            < Rp 3 Juta</option>
+                                        <option value="3 - 5 Juta">Rp 3 - 5 Juta</option>
+                                        <option value="> 5 Juta">> Rp 5 Juta</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
