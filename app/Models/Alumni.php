@@ -22,10 +22,10 @@ class Alumni extends Authenticatable
         return $this->belongsTo(Prodi::class, 'id_prodi');
     }
 
-    public function prestasi()
-    {
-        return $this->hasMany(Prestasi::class, 'id_alumni');
-    }
+    // public function prestasi()
+    // {
+    //     return $this->hasMany(Prestasi::class, 'id_alumni');
+    // }
 
     public function tracerMain()
     {

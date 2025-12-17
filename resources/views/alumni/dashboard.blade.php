@@ -155,10 +155,12 @@
             </div>
             <h3 class="text-gray-500 text-sm font-medium uppercase tracking-wider">Prestasi Anda</h3>
 
-            <p class="text-2xl font-bold text-gray-800 mt-1">{{ $alumni->prestasi->count() ?? 0 }} Prestasi</p>
+            {{-- UPDATE: Diubah jadi manual 0 karena tabel dihapus --}}
+            <p class="text-2xl font-bold text-gray-800 mt-1">0 Prestasi</p>
 
             <div class="mt-4 flex gap-2">
-                @if (($alumni->prestasi->count() ?? 0) > 0)
+                {{-- UPDATE: If diubah menjadi false agar selalu lari ke else --}}
+                @if (false)
                     <span
                         class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                         Terdata
