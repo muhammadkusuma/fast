@@ -735,112 +735,199 @@
             {{-- ========================================================================
              STEP 4: KOMPETENSI & PENUTUP (SECTION D)
              ======================================================================== --}}
-            <div x-show="currentStep === 4" x-transition.opacity class="p-8 space-y-8">
-                <div class="border-l-4 border-green-500 pl-4">
-                    <h2 class="text-xl font-bold text-gray-800">D. Kompetensi & Penutup</h2>
-                    <p class="text-sm text-gray-500">Evaluasi kemampuan diri dan umpan balik.</p>
+            <div x-show="currentStep === 4" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform translate-y-4"
+                x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-4xl mx-auto">
+
+                <div class="mb-8 border-l-4 border-green-500 pl-4">
+                    <h2 class="text-2xl font-bold text-gray-800">D. Kompetensi & Penutup</h2>
+                    <p class="text-gray-500 mt-1">Langkah terakhir! Evaluasi diri dan berikan masukan untuk kampus.</p>
                 </div>
 
-                {{-- Kompetensi --}}
-                <div class="overflow-x-auto rounded-lg border border-gray-200">
-                    <table class="w-full text-sm text-gray-600">
-                        <thead class="bg-gray-100 text-xs uppercase">
-                            <tr>
-                                <th class="px-4 py-3 text-left w-1/2">Kompetensi yang dikuasai saat Lulus</th>
-                                <th class="px-2 py-3 text-center" colspan="5">Skala (1: Rendah - 5: Tinggi)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
+                <div class="space-y-8">
+
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <div class="flex items-center justify-between mb-6 border-b pb-4">
+                            <h3 class="text-lg font-bold text-gray-800">Kompetensi Diri</h3>
+                            <div class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                                Skala 1 (Rendah) - 5 (Tinggi)
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
                             @foreach ($kompetensi as $key => $label)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-2 font-medium">{{ $label }}</td>
-                                    @for ($i = 1; $i <= 5; $i++)
-                                        <td class="px-2 py-2 text-center">
-                                            <label class="block w-full h-full cursor-pointer">
+                                <div class="group">
+                                    <p class="text-gray-700 font-medium mb-3 group-hover:text-green-700 transition">
+                                        {{ $label }}</p>
+
+                                    <div class="flex justify-between md:justify-start md:gap-4">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <label class="cursor-pointer relative">
                                                 <input type="radio" name="q42{{ $key }}"
                                                     value="{{ $i }}"
-                                                    x-model="formData.q42{{ $key }}" class="sr-only peer">
+                                                    x-model="formData.q42{{ $key }}" class="peer sr-only">
                                                 <div
-                                                    class="w-6 h-6 mx-auto rounded-full border flex items-center justify-center text-xs peer-checked:bg-green-500 peer-checked:text-white transition">
+                                                    class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg border-2 border-gray-100 bg-gray-50 text-gray-400 font-bold hover:bg-green-50 hover:border-green-200 hover:text-green-600 transition-all peer-checked:bg-green-500 peer-checked:border-green-500 peer-checked:text-white peer-checked:shadow-md peer-checked:scale-110">
                                                     {{ $i }}
                                                 </div>
                                             </label>
-                                        </td>
-                                    @endfor
-                                </tr>
+                                        @endfor
+                                    </div>
+                                </div>
                             @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                {{-- Penutup --}}
-                <div class="space-y-4 bg-gray-50 p-6 rounded-xl">
-                    <h3 class="font-bold text-gray-800 border-b pb-2">Pertanyaan Penutup</h3>
-
-                    {{-- Bahasa --}}
-                    <div>
-                        <label class="label">Kemampuan Bahasa Asing (1-5)</label>
-                        <div class="flex gap-4">
-                            @for ($i = 1; $i <= 5; $i++)
-                                <label class="cursor-pointer"><input type="radio" name="q45_bahasa"
-                                        value="{{ $i }}" x-model="formData.q45_bahasa" class="mr-1">
-                                    {{ $i }}</label>
-                            @endfor
                         </div>
                     </div>
 
-                    {{-- Pilih UIN --}}
-                    <div>
-                        <label class="label">Apakah Anda akan memilih UIN Suska lagi jika mengulang kuliah? <span
-                                class="text-red-500">*</span></label>
-                        <div class="flex gap-4">
-                            <label class="inline-flex items-center"><input type="radio" name="q47_uin" value="Ya"
-                                    x-model="formData.q47_uin" class="mr-2"> Ya</label>
-                            <label class="inline-flex items-center"><input type="radio" name="q47_uin" value="Tidak"
-                                    x-model="formData.q47_uin" class="mr-2"> Tidak</label>
+                    <div class="bg-green-50 rounded-xl border border-green-200 p-6 space-y-8">
+                        <h3 class="font-bold text-green-900 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Umpan Balik Terakhir
+                        </h3>
+
+                        <div class="bg-white p-5 rounded-lg shadow-sm">
+                            <label class="block text-sm font-bold text-gray-700 mb-3">Bagaimana kemampuan Bahasa Asing
+                                Anda?</label>
+                            <div class="flex justify-between md:justify-start md:gap-4">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <label class="cursor-pointer relative">
+                                        <input type="radio" name="q45_bahasa" value="{{ $i }}"
+                                            x-model="formData.q45_bahasa" class="peer sr-only">
+                                        <div
+                                            class="w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 text-gray-500 hover:border-blue-400 peer-checked:bg-blue-600 peer-checked:border-blue-600 peer-checked:text-white transition">
+                                            {{ $i }}
+                                        </div>
+                                    </label>
+                                @endfor
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-400 mt-2 px-1">
+                                <span>Sangat Buruk</span>
+                                <span>Sangat Baik</span>
+                            </div>
                         </div>
-                        <div x-show="formData.q47_uin === 'Tidak'" x-transition class="mt-2">
-                            <input type="text" name="q48_alasan_uin" x-model="formData.q48_alasan_uin"
-                                class="input-field" placeholder="Mengapa tidak?">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 mb-3">Memilih UIN Suska lagi jika
+                                    mengulang?</label>
+                                <div class="flex gap-3 mb-3">
+                                    <label class="flex-1 cursor-pointer">
+                                        <input type="radio" name="q47_uin" value="Ya" x-model="formData.q47_uin"
+                                            class="peer sr-only">
+                                        <div
+                                            class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 bg-white hover:bg-green-50 hover:border-green-300 peer-checked:border-green-500 peer-checked:bg-green-100 peer-checked:text-green-800 transition">
+                                            <span class="text-xl">😍</span>
+                                            <span class="text-sm font-bold mt-1">Ya, Pasti</span>
+                                        </div>
+                                    </label>
+                                    <label class="flex-1 cursor-pointer">
+                                        <input type="radio" name="q47_uin" value="Tidak" x-model="formData.q47_uin"
+                                            class="peer sr-only">
+                                        <div
+                                            class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 bg-white hover:bg-red-50 hover:border-red-300 peer-checked:border-red-500 peer-checked:bg-red-100 peer-checked:text-red-800 transition">
+                                            <span class="text-xl">🤔</span>
+                                            <span class="text-sm font-bold mt-1">Mungkin Tidak</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div x-show="formData.q47_uin === 'Tidak'" x-transition>
+                                    <textarea name="q48_alasan_uin" x-model="formData.q48_alasan_uin" rows="2"
+                                        class="p-2 w-full rounded-md border-red-300 focus:ring-red-500 text-sm placeholder-red-300"
+                                        placeholder="Kritik & saran Anda sangat berharga..."></textarea>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 mb-3">Memilih Prodi yang sama
+                                    lagi?</label>
+                                <div class="flex gap-3 mb-3">
+                                    <label class="flex-1 cursor-pointer">
+                                        <input type="radio" name="q49_prodi" value="Ya"
+                                            x-model="formData.q49_prodi" class="peer sr-only">
+                                        <div
+                                            class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 bg-white hover:bg-green-50 hover:border-green-300 peer-checked:border-green-500 peer-checked:bg-green-100 peer-checked:text-green-800 transition">
+                                            <span class="text-xl">📚</span>
+                                            <span class="text-sm font-bold mt-1">Ya, Sesuai</span>
+                                        </div>
+                                    </label>
+                                    <label class="flex-1 cursor-pointer">
+                                        <input type="radio" name="q49_prodi" value="Tidak"
+                                            x-model="formData.q49_prodi" class="peer sr-only">
+                                        <div
+                                            class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 bg-white hover:bg-red-50 hover:border-red-300 peer-checked:border-red-500 peer-checked:bg-red-100 peer-checked:text-red-800 transition">
+                                            <span class="text-xl">🔄</span>
+                                            <span class="text-sm font-bold mt-1">Ingin Pindah</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div x-show="formData.q49_prodi === 'Tidak'" x-transition>
+                                    <textarea name="q50_alasan_prodi" x-model="formData.q50_alasan_prodi" rows="2"
+                                        class="p-2 w-full rounded-md border-red-300 focus:ring-red-500 text-sm placeholder-red-300"
+                                        placeholder="Apa alasan utamanya?"></textarea>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
-                    {{-- Pilih Prodi --}}
-                    <div>
-                        <label class="label">Apakah Anda akan memilih Prodi yang sama lagi? <span
-                                class="text-red-500">*</span></label>
-                        <div class="flex gap-4">
-                            <label class="inline-flex items-center"><input type="radio" name="q49_prodi"
-                                    value="Ya" x-model="formData.q49_prodi" class="mr-2"> Ya</label>
-                            <label class="inline-flex items-center"><input type="radio" name="q49_prodi"
-                                    value="Tidak" x-model="formData.q49_prodi" class="mr-2"> Tidak</label>
-                        </div>
-                        <div x-show="formData.q49_prodi === 'Tidak'" x-transition class="mt-2">
-                            <input type="text" name="q50_alasan_prodi" x-model="formData.q50_alasan_prodi"
-                                class="input-field" placeholder="Mengapa tidak?">
-                        </div>
-                    </div>
                 </div>
             </div>
 
-            {{-- NAVIGATION --}}
-            <div class="bg-gray-50 px-8 py-5 border-t border-gray-100 flex justify-between items-center">
-                <button type="button" x-show="currentStep > 1" @click="prevStep"
-                    class="px-6 py-2.5 rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 font-medium transition shadow-sm">
-                    Kembali
-                </button>
-                <div x-show="currentStep === 1"></div>
+            {{-- NAVIGATION BAR (Sticky & Modern) --}}
+            <div
+                class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50">
+                <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
 
-                <button type="button" x-show="currentStep < steps.length" @click="nextStep"
-                    class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md font-medium transition">
-                    Lanjut
-                </button>
+                    <button type="button" x-show="currentStep > 1" @click="prevStep"
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 font-medium transition duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                            </path>
+                        </svg>
+                        <span class="hidden sm:inline">Kembali</span>
+                    </button>
+                    <div x-show="currentStep === 1"></div> {{-- Spacer jika tidak ada tombol kembali --}}
 
-                <button type="submit" x-show="currentStep === steps.length" :disabled="isLoading"
-                    class="px-8 py-2.5 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 shadow-lg transition flex items-center disabled:opacity-50">
-                    <span x-text="isLoading ? 'Menyimpan...' : 'Selesai & Kirim'"></span>
-                </button>
+                    <div class="hidden sm:flex gap-1">
+                        <template x-for="step in steps">
+                            <div class="w-2.5 h-2.5 rounded-full transition-colors duration-300"
+                                :class="step <= currentStep ? 'bg-blue-600' : 'bg-gray-300'"></div>
+                        </template>
+                    </div>
+
+                    <button type="button" x-show="currentStep < steps.length" @click="nextStep"
+                        class="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-lg hover:shadow-blue-500/30 font-medium transition duration-200 transform hover:-translate-y-0.5">
+                        <span>Lanjut</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </button>
+
+                    <button type="submit" x-show="currentStep === steps.length" :disabled="isLoading"
+                        class="flex items-center gap-2 px-8 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-green-500/30 transition duration-200 transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed">
+
+                        <svg x-show="isLoading" class="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+
+                        <span x-text="isLoading ? 'Menyimpan Data...' : 'Selesai & Kirim'"></span>
+                        <svg x-show="!isLoading" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </button>
+                </div>
             </div>
+            <div class="h-24"></div>
 
         </form>
     </div>
