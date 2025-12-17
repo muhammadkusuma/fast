@@ -41,12 +41,12 @@ Route::middleware(['auth:alumni'])->prefix('alumni')->name('alumni.')->group(fun
     Route::get('/profil', [App\Http\Controllers\Alumni\ProfileController::class, 'index'])->name('profil');
     Route::put('/profil', [App\Http\Controllers\Alumni\ProfileController::class, 'update'])->name('profil.update');
 
-    // === PERBAIKAN DI SINI ===
-    // Ubah nama dari 'tracer.wizard' menjadi 'tracer.create'
     Route::get('/tracer/isi', [TracerController::class, 'create'])->name('tracer.create');
+    // Route untuk menampilkan form
+    Route::get('/tracer', [TracerController::class, 'index'])->name('tracer.index');
 
-    // Route untuk simpan (Store)
-    Route::post('/tracer/simpan', [TracerController::class, 'store'])->name('tracer.store');
+    // Route untuk submit form (POST)
+    Route::post('/tracer', [TracerController::class, 'store'])->name('tracer.store');
 });
 
 /*

@@ -1,124 +1,142 @@
 <?php
-
 namespace App\Http\Controllers\Alumni;
 
 use App\Http\Controllers\Controller;
-use App\Models\TracerMain;
+use App\Models\TracerStudy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class TracerController extends Controller
 {
     /**
-     * Menampilkan form wizard tracer study.
+     * Menampilkan Form Wizard
      */
+    public function index()
+    {
+        // Cek apakah alumni sudah pernah mengisi tracer tahun ini?
+        $alumniId      = Auth::guard('alumni')->id();
+        $alreadyFilled = TracerStudy::where('user_id', $alumniId)
+            ->whereYear('created_at', date('Y'))
+            ->exists();
+
+        if ($alreadyFilled) {
+            return redirect()->route('alumni.dashboard')->with('info', 'Anda sudah mengisi Tracer Study tahun ini.');
+        }
+
+        return view('alumni.tracer.wizard');
+    }
+
     public function create()
     {
-        // Cek apakah alumni sudah mengisi tahun ini
-        $existing = TracerMain::where('id_alumni', Auth::guard('alumni')->id())
+        // Cek apakah alumni sudah pernah mengisi tracer tahun ini?
+        $alumniId      = Auth::guard('alumni')->id();
+        $alreadyFilled = TracerMain::where('id_alumni', $alumniId)
             ->where('tahun_tracer', date('Y'))
             ->exists();
 
-        // Jika sudah mengisi, arahkan kembali ke dashboard dengan pesan error
-        if ($existing) {
+        if ($alreadyFilled) {
             return redirect()->route('alumni.dashboard')
-                ->with('error', 'Anda sudah mengisi Tracer Study periode ini. Terima kasih!');
+                ->with('info', 'Anda sudah mengisi Tracer Study tahun ini.');
         }
 
         // Tampilkan view wizard
+        // Pastikan file view ada di resources/views/alumni/tracer/wizard.blade.php
         return view('alumni.tracer.wizard');
     }
 
     /**
-     * Menyimpan data tracer study.
+     * Menyimpan Data Tracer Study
      */
     public function store(Request $request)
     {
-        // 1. DEFINISI ATURAN VALIDASI
-        $rules = [
-            'status_aktivitas' => 'required|string',
+        // 1. Validasi Data
+        // Kita gunakan validasi conditional (required_if) untuk bagian pekerjaan
+        $validatedData = $request->validate([
+            // --- STEP 1: Data Pribadi ---
+            'q1_nama'              => 'required|string',
+            'q2_angkatan'          => 'required',
+            'q3_prodi'             => 'required',
+            'q4_ipk'               => 'required',
+            'q5_tanggal_lulus'     => 'required|date',
+            'q6_alamat'            => 'required|string',
+            'q7_provinsi'          => 'required|string',
+            'q9_kota'              => 'required|string',
+            'q8_kodepos'           => 'required',
+            'q10a_no_hp'           => 'required',
+            'q10b_email'           => 'required|email',
+            'q11_jenis_kelamin'    => 'required',
+            'status_bekerja'       => 'required|string',
 
-            // Validasi Step 2 (Pencarian Kerja)
-            'waktu_mencari'    => 'required|string',
-            'waktu_tunggu'     => 'required|numeric|min:0',
-            'jumlah_lamaran'   => 'required|numeric|min:0',
-            'sumber_info'      => 'required|string',
+            // --- STEP 2: Pekerjaan (Wajib JIKA status_bekerja = Sudah Bekerja) ---
+            'q12_jenis_perusahaan' => 'required_if:status_bekerja,Sudah Bekerja',
+            'q12a_lainnya'         => 'nullable',
+            'q13a_nama_kantor'     => 'required_if:status_bekerja,Sudah Bekerja',
+            'q15_tahun_masuk'      => 'required_if:status_bekerja,Sudah Bekerja',
+            'q13b_pimpinan'        => 'nullable',
+            'q13c_email_pimpinan'  => 'nullable',
+            'q16_telp_pimpinan'    => 'nullable',
+            'q19_penghasilan'      => 'required_if:status_bekerja,Sudah Bekerja',
+            'q20_status_pekerjaan' => 'required_if:status_bekerja,Sudah Bekerja',
+            'q21_hubungan'         => 'required_if:status_bekerja,Sudah Bekerja',
+            'is_first_job'         => 'required_if:status_bekerja,Sudah Bekerja',
 
-            // Validasi Step 3 (Kompetensi & Evaluasi) - Wajib diisi semua (skala 1-5)
-            'etika_kampus'     => 'required|integer|between:1,5',
-            'etika_kerja'      => 'required|integer|between:1,5',
-            'hardskill_kampus' => 'required|integer|between:1,5',
-            'hardskill_kerja'  => 'required|integer|between:1,5',
-            'inggris_kampus'   => 'required|integer|between:1,5',
-            'inggris_kerja'    => 'required|integer|between:1,5',
-            'eval_lab'         => 'required|integer|between:1,5',
-            'eval_dosen'       => 'required|integer|between:1,5',
-        ];
+            // Sub-step: Riwayat Pekerjaan Pertama (Wajib JIKA is_first_job = Tidak)
+            'q25_kantor_pertama'   => 'required_if:is_first_job,Tidak',
+            'q26_alasan_berhenti'  => 'nullable',
+            'q28_gaji_pertama'     => 'nullable',
 
-        // 2. VALIDASI KONDISIONAL
-        // Jika status bekerja/wiraswasta, maka data perusahaan WAJIB diisi
-        $pekerja = ['Bekerja (Full Time/Part Time)', 'Wiraswasta'];
+            // --- STEP 3: Pendidikan & Organisasi ---
+            'q33_tempat_tinggal'   => 'required',
+            'q34_sumber_biaya'     => 'required',
+            'q35_organisasi'       => 'required',
+            'q36_keaktifan'        => 'required_if:q35_organisasi,Ya',
+            'q37_kursus'           => 'required',
+            'q37a_nama_kursus'     => 'required_if:q37_kursus,Ya',
 
-        if (in_array($request->status_aktivitas, $pekerja)) {
-            $rules['nama_perusahaan'] = 'required|string|max:255';
-            $rules['jenis_instansi']  = 'required|string';
-            $rules['provinsi']        = 'required|string';
-            $rules['gaji']            = 'required|numeric|min:0';
-            $rules['keselarasan']     = 'required|string';
-        }
+            // Matriks Evaluasi Pembelajaran (q38a - q38f) - Wajib diisi (1-5)
+            'q38a'                 => 'required|integer',
+            'q38b'                 => 'required|integer',
+            'q38c'                 => 'required|integer',
+            'q38d'                 => 'required|integer',
+            'q38e'                 => 'required|integer',
+            'q38f'                 => 'required|integer',
 
-        $validated = $request->validate($rules);
+            // Matriks Fasilitas (q40a - q40k)
+            'q40a'                 => 'required|integer',
+            'q40b'                 => 'required|integer',
+            'q40c'                 => 'required|integer',
+            'q40d'                 => 'required|integer',
+            'q40e'                 => 'required|integer',
+            'q40g'                 => 'required|integer',
+            'q40k'                 => 'required|integer',
 
-        try {
-            DB::transaction(function () use ($request, $pekerja) {
-                $alumniId = Auth::guard('alumni')->id();
-                $isBekerja = in_array($request->status_aktivitas, $pekerja);
+            // --- STEP 4: Kompetensi ---
+            // Loop validasi untuk q42a - q42o (Hardskill, dll)
+            'q42a'                 => 'required|integer', 'q42b' => 'required|integer', 'q42c' => 'required|integer',
+            'q42d'                 => 'required|integer', 'q42e' => 'required|integer', 'q42f' => 'required|integer',
+            'q42i'                 => 'required|integer', 'q42l' => 'required|integer', 'q42m' => 'required|integer',
+            'q42n'                 => 'required|integer', 'q42o' => 'required|integer',
 
-                // A. SIMPAN MAIN TRACER
-                $tracer = TracerMain::create([
-                    'id_alumni'              => $alumniId,
-                    'tahun_tracer'           => date('Y'),
-                    'status_aktivitas'       => $request->status_aktivitas,
+            // Penutup
+            'q45_bahasa'           => 'required|integer',
+            'q47_uin'              => 'required',
+            'q48_alasan_uin'       => 'required_if:q47_uin,Tidak',
+            'q49_prodi'            => 'required',
+            'q50_alasan_prodi'     => 'required_if:q49_prodi,Tidak',
 
-                    // Simpan NULL jika tidak bekerja agar database bersih
-                    'nama_perusahaan'        => $isBekerja ? $request->nama_perusahaan : null,
-                    'jenis_perusahaan'       => $isBekerja ? $request->jenis_instansi : null,
-                    'provinsi_perusahaan'    => $isBekerja ? $request->provinsi : null,
-                    'gaji_bulanan'           => $isBekerja ? $request->gaji : 0,
-                    'keselarasan_horizontal' => $isBekerja ? $request->keselarasan : null,
-                ]);
+            // Field tambahan dari form (hidden input fakultas)
+            'fakultas'             => 'nullable|string',
+        ]);
 
-                // B. SIMPAN PROCESS (Pencarian Kerja)
-                $tracer->process()->create([
-                    'bulan_mulai_mencari'  => $request->waktu_mencari,
-                    'waktu_tunggu_bulan'   => $request->waktu_tunggu,
-                    'jumlah_lamaran'       => $request->jumlah_lamaran,
-                    'sumber_info_lowongan' => $request->sumber_info,
-                ]);
+        // 2. Tambahkan User ID
+        // Pastikan menggunakan guard 'alumni' karena di view Anda menggunakan Auth::guard('alumni')
+        $validatedData['user_id'] = Auth::guard('alumni')->id();
 
-                // C. SIMPAN COMPETENCE (Gap Analysis)
-                $tracer->competence()->create([
-                    'etika_a'           => $request->etika_kampus,
-                    'etika_b'           => $request->etika_kerja,
-                    'keahlian_bidang_a' => $request->hardskill_kampus,
-                    'keahlian_bidang_b' => $request->hardskill_kerja,
-                    'bahasa_inggris_a'  => $request->inggris_kampus,
-                    'bahasa_inggris_b'  => $request->inggris_kerja,
-                ]);
+        // 3. Simpan ke Database
+        TracerStudy::create($validatedData);
 
-                // D. SIMPAN EVALUATION
-                $tracer->evaluation()->create([
-                    'fasilitas_laboratorium' => $request->eval_lab,
-                    'kualitas_dosen'         => $request->eval_dosen,
-                ]);
-            });
-
-            return redirect()->route('alumni.dashboard')
-                ->with('success', 'Terima kasih! Data Tracer Study Anda berhasil disimpan.');
-
-        } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
-        }
+        // 4. Redirect
+        return redirect()->route('alumni.dashboard')
+            ->with('success', 'Terima kasih! Data Tracer Study Anda berhasil disimpan.');
     }
 }
