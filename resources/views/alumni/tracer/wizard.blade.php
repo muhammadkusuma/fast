@@ -96,123 +96,193 @@
             {{-- ========================================================================
              STEP 1: DATA PRIBADI (SECTION A)
              ======================================================================== --}}
-            <div x-show="currentStep === 1" x-transition.opacity class="p-8 space-y-6">
-                <div class="border-l-4 border-blue-500 pl-4">
-                    <h2 class="text-xl font-bold text-gray-800">A. Data Pribadi</h2>
-                    <p class="text-sm text-gray-500">Pastikan data diri Anda mutakhir.</p>
+            <div x-show="currentStep === 1" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform translate-y-4"
+                x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-4xl mx-auto pt-5">
+
+                <div class="mb-8 border-l-4 border-blue-600 pl-4">
+                    <h2 class="text-2xl font-bold text-gray-800">A. Data Pribadi</h2>
+                    <p class="text-gray-500 mt-1">Mohon periksa data akademik dan lengkapi data kontak Anda.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {{-- Read Only Fields --}}
-                    <div class="space-y-4 md:col-span-2 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="space-y-8">
+
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                </path>
+                            </svg>
+                            <h3 class="font-semibold text-gray-700">Data Akademik (Terkunci)</h3>
+                        </div>
+                        <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div>
-                                <label class="label">NIM</label>
-                                <input type="text" value="{{ $alumni->nim }}" class="input-field bg-gray-100" readonly>
+                                <span class="block text-xs font-medium text-gray-400 uppercase tracking-wider">NIM</span>
+                                <div class="mt-1 font-semibold text-gray-800">{{ $alumni->nim }}</div>
                             </div>
                             <div>
-                                <label class="label">Nama Lengkap</label>
-                                <input type="text" name="q1_nama" value="{{ $alumni->nama_lengkap }}"
-                                    class="input-field bg-gray-100" readonly>
+                                <span class="block text-xs font-medium text-gray-400 uppercase tracking-wider">Nama
+                                    Lengkap</span>
+                                <div class="mt-1 font-semibold text-gray-800">{{ $alumni->nama_lengkap }}</div>
+                                <input type="hidden" name="q1_nama" value="{{ $alumni->nama_lengkap }}">
                             </div>
                             <div>
-                                <label class="label">Prodi</label>
-                                <input type="text" name="q3_prodi" value="{{ $alumni->prodi->nama_prodi ?? '-' }}"
-                                    class="input-field bg-gray-100" readonly>
+                                <span class="block text-xs font-medium text-gray-400 uppercase tracking-wider">Program
+                                    Studi</span>
+                                <div class="mt-1 font-semibold text-gray-800">{{ $alumni->prodi->nama_prodi ?? '-' }}</div>
+                                <input type="hidden" name="q3_prodi" value="{{ $alumni->prodi->nama_prodi ?? '-' }}">
                             </div>
                             <div>
-                                <label class="label">Angkatan</label>
-                                <input type="text" name="q2_angkatan" value="{{ $alumni->tahun_masuk }}"
-                                    class="input-field bg-gray-100" readonly>
+                                <span
+                                    class="block text-xs font-medium text-gray-400 uppercase tracking-wider">Angkatan</span>
+                                <div class="mt-1 font-semibold text-gray-800">{{ $alumni->tahun_masuk }}</div>
+                                <input type="hidden" name="q2_angkatan" value="{{ $alumni->tahun_masuk }}">
                             </div>
                             <div>
-                                <label class="label">IPK</label>
-                                <input type="text" name="q4_ipk" value="{{ $alumni->ipk }}"
-                                    class="input-field bg-gray-100" readonly>
+                                <span class="block text-xs font-medium text-gray-400 uppercase tracking-wider">IPK</span>
+                                <div class="mt-1 font-semibold text-gray-800">{{ $alumni->ipk }}</div>
+                                <input type="hidden" name="q4_ipk" value="{{ $alumni->ipk }}">
                             </div>
-                            <div>
-                                <label class="label">Tanggal Lulus (Ijazah) <span class="text-red-500">*</span></label>
+
+                            <div class="relative">
+                                <label class="block text-xs font-medium text-blue-600 uppercase tracking-wider mb-1">Tanggal
+                                    Lulus (Ijazah) <span class="text-red-500">*</span></label>
                                 <input type="date" name="q5_tanggal_lulus" x-model="formData.q5_tanggal_lulus"
-                                    class="input-field">
+                                    class="block w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-md text-gray-900 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             </div>
                         </div>
                     </div>
 
-                    {{-- Alamat --}}
-                    <div class="md:col-span-2">
-                        <label class="label">Alamat Rumah Lengkap <span class="text-red-500">*</span></label>
-                        <textarea name="q6_alamat" x-model="formData.q6_alamat" rows="2" class="input-field"
-                            placeholder="Jalan, RT/RW, Kelurahan..."></textarea>
-                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
 
-                    {{-- Provinsi & Kota --}}
-                    <div>
-                        <label class="label">Provinsi <span class="text-red-500">*</span></label>
-                        <select name="q7_provinsi" x-model="formData.q7_provinsi" @change="loadKabupaten()"
-                            class="input-field">
-                            <option value="">-- Pilih Provinsi --</option>
-                            <template x-for="p in listProvinsi">
-                                <option :value="p" x-text="p"></option>
-                            </template>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="label">Kabupaten/Kota <span class="text-red-500">*</span></label>
-                        <select name="q9_kota" x-model="formData.q9_kota" :disabled="!formData.q7_provinsi"
-                            class="input-field">
-                            <option value="">-- Pilih Kota --</option>
-                            <template x-for="k in listKabupaten">
-                                <option :value="k" x-text="k"></option>
-                            </template>
-                        </select>
-                    </div>
+                        <div class="md:col-span-7 space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Domisili Lengkap <span
+                                        class="text-red-500">*</span></label>
+                                <textarea name="q6_alamat" x-model="formData.q6_alamat" rows="3"
+                                    class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition"
+                                    placeholder="Nama Jalan, No. Rumah, RT/RW, Kelurahan..."></textarea>
+                            </div>
 
-                    {{-- Kode Pos --}}
-                    <div>
-                        <label class="label">Kode Pos <span class="text-red-500">*</span></label>
-                        <input type="number" name="q8_kodepos" x-model="formData.q8_kodepos" class="input-field">
-                    </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Provinsi <span
+                                            class="text-red-500">*</span></label>
+                                    <select name="q7_provinsi" x-model="formData.q7_provinsi" @change="loadKabupaten()"
+                                        class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                        <option value="">Pilih Provinsi</option>
+                                        <template x-for="p in listProvinsi">
+                                            <option :value="p" x-text="p"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Kota/Kabupaten <span
+                                            class="text-red-500">*</span></label>
+                                    <select name="q9_kota" x-model="formData.q9_kota" :disabled="!formData.q7_provinsi"
+                                        class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed">
+                                        <option value="">Pilih Kota</option>
+                                        <template x-for="k in listKabupaten">
+                                            <option :value="k" x-text="k"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Kode Pos <span
+                                            class="text-red-500">*</span></label>
+                                    <input type="text" name="q8_kodepos" x-model="formData.q8_kodepos"
+                                        class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                            </div>
+                        </div>
 
-                    {{-- Kontak --}}
-                    <div>
-                        <label class="label">Nomor HP (WA) <span class="text-red-500">*</span></label>
-                        <input type="text" name="q10a_no_hp" x-model="formData.q10a_no_hp" class="input-field"
-                            placeholder="0812...">
-                    </div>
-                    <div>
-                        <label class="label">Email <span class="text-red-500">*</span></label>
-                        <input type="email" name="q10b_email" x-model="formData.q10b_email" class="input-field">
-                    </div>
+                        <div class="md:col-span-5 space-y-6">
+                            <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                                <h4 class="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Kontak Personal
+                                </h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm text-gray-600 mb-1">No. WhatsApp <span
+                                                class="text-red-500">*</span></label>
+                                        <div class="relative">
+                                            <div
+                                                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                                </svg>
+                                            </div>
+                                            <input type="text" name="q10a_no_hp" x-model="formData.q10a_no_hp"
+                                                class="p-3 pl-10 w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                                placeholder="0812...">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm text-gray-600 mb-1">Email Aktif <span
+                                                class="text-red-500">*</span></label>
+                                        <div class="relative">
+                                            <div
+                                                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                </svg>
+                                            </div>
+                                            <input type="email" name="q10b_email" x-model="formData.q10b_email"
+                                                class="p-3 pl-10 w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                    {{-- Jenis Kelamin --}}
-                    <div>
-                        <label class="label">Jenis Kelamin <span class="text-red-500">*</span></label>
-                        <div class="flex gap-4 mt-2">
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="q11_jenis_kelamin" value="Laki-laki"
-                                    x-model="formData.q11_jenis_kelamin" class="text-blue-600 focus:ring-blue-500">
-                                <span class="ml-2">Laki-laki</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="q11_jenis_kelamin" value="Perempuan"
-                                    x-model="formData.q11_jenis_kelamin" class="text-pink-600 focus:ring-pink-500">
-                                <span class="ml-2">Perempuan</span>
-                            </label>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin <span
+                                        class="text-red-500">*</span></label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="q11_jenis_kelamin" value="Laki-laki"
+                                            x-model="formData.q11_jenis_kelamin" class="peer sr-only">
+                                        <div
+                                            class="text-center p-3 border rounded-lg hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 transition">
+                                            <span class="font-medium text-sm">Laki-laki</span>
+                                        </div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="q11_jenis_kelamin" value="Perempuan"
+                                            x-model="formData.q11_jenis_kelamin" class="peer sr-only">
+                                        <div
+                                            class="text-center p-3 border rounded-lg hover:bg-gray-50 peer-checked:border-pink-500 peer-checked:bg-pink-50 peer-checked:text-pink-700 transition">
+                                            <span class="font-medium text-sm">Perempuan</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    {{-- STATUS LOGIC BLOCK --}}
-                    <div class="md:col-span-2 bg-blue-50 p-4 rounded-lg border border-blue-200">
-                        <label class="label text-blue-800 text-lg">Status Saat Ini <span
-                                class="text-red-500">*</span></label>
-                        <select name="status_bekerja" x-model="formData.status_bekerja"
-                            class="input-field border-blue-300 ring-blue-200">
-                            <option value="">-- Pilih Status --</option>
-                            <option value="Sudah Bekerja">Sudah Bekerja / Wiraswasta</option>
-                            <option value="Belum Bekerja">Belum Bekerja / Sedang Mencari</option>
-                            <option value="Sedang Kuliah">Sedang Melanjutkan Pendidikan</option>
-                        </select>
+                    <div class="mt-8">
+                        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-1 shadow-lg">
+                            <div class="bg-white rounded-lg p-6">
+                                <label class="block text-lg font-bold text-gray-800 mb-2">
+                                    Status Saat Ini <span class="text-red-500">*</span>
+                                </label>
+                                <p class="text-sm text-gray-500 mb-4">Pilih status yang paling menggambarkan kondisi Anda
+                                    saat ini untuk menentukan pertanyaan selanjutnya.</p>
+
+                                <select name="status_bekerja" x-model="formData.status_bekerja"
+                                    class="block w-full text-lg py-3 px-4 border-2 border-blue-100 bg-blue-50 rounded-lg text-blue-900 focus:ring-blue-500 focus:border-blue-500 transition cursor-pointer">
+                                    <option value="">-- Pilih Status --</option>
+                                    <option value="Sudah Bekerja">Sudah Bekerja / Wiraswasta</option>
+                                    <option value="Belum Bekerja">Belum Bekerja / Sedang Mencari</option>
+                                    <option value="Sedang Kuliah">Sedang Melanjutkan Pendidikan</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
 
