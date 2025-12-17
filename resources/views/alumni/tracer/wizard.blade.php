@@ -170,7 +170,7 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Provinsi <span
                                             class="text-red-500">*</span></label>
                                     <select name="q7_provinsi" x-model="formData.q7_provinsi" @change="loadKabupaten()"
-                                        class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                        class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                                         <option value="">Pilih Provinsi</option>
                                         <template x-for="p in listProvinsi">
                                             <option :value="p" x-text="p"></option>
@@ -181,7 +181,7 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Kota/Kabupaten <span
                                             class="text-red-500">*</span></label>
                                     <select name="q9_kota" x-model="formData.q9_kota" :disabled="!formData.q7_provinsi"
-                                        class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed">
+                                        class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed">
                                         <option value="">Pilih Kota</option>
                                         <template x-for="k in listKabupaten">
                                             <option :value="k" x-text="k"></option>
@@ -321,7 +321,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Instansi / Perusahaan
                                     <span class="text-red-500">*</span></label>
                                 <select name="q12_jenis_perusahaan" x-model="formData.q12_jenis_perusahaan"
-                                    class="p-3 w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                    class="p-3 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
                                     <option value="">-- Pilih Jenis Instansi --</option>
                                     <option value="Instansi Pemerintah">Instansi Pemerintah (PNS/Non-PNS)</option>
                                     <option value="BUMN/BUMD">BUMN / BUMD</option>
@@ -541,130 +541,193 @@
             {{-- ========================================================================
              STEP 3: PENDIDIKAN & BELAJAR (SECTION C)
              ======================================================================== --}}
-            <div x-show="currentStep === 3" x-transition.opacity class="p-8 space-y-8">
-                <div class="border-l-4 border-purple-500 pl-4">
-                    <h2 class="text-xl font-bold text-gray-800">C. Pengalaman Belajar</h2>
-                    <p class="text-sm text-gray-500">Evaluasi pengalaman Anda selama kuliah.</p>
+            <div x-show="currentStep === 3" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform translate-y-4"
+                x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-4xl mx-auto pt-5">
+
+                <div class="mb-8 border-l-4 border-purple-600 pl-4">
+                    <h2 class="text-2xl font-bold text-gray-800">C. Pengalaman Belajar</h2>
+                    <p class="text-gray-500 mt-1">Bagikan pengalaman Anda selama menempuh pendidikan untuk evaluasi kampus.
+                    </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="label">Tempat Tinggal Selama Kuliah <span class="text-red-500">*</span></label>
-                        <select name="q33_tempat_tinggal" x-model="formData.q33_tempat_tinggal" class="input-field">
-                            <option value="">-- Pilih --</option>
-                            <option value="Bersama Orang Tua">Bersama Orang Tua</option>
-                            <option value="Kos">Kos / Sewa</option>
-                            <option value="Asrama">Asrama</option>
-                            <option value="Lainnya">Lainnya</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="label">Sumber Biaya Kuliah <span class="text-red-500">*</span></label>
-                        <select name="q34_sumber_biaya" x-model="formData.q34_sumber_biaya" class="input-field">
-                            <option value="">-- Pilih --</option>
-                            <option value="Biaya Sendiri / Keluarga">Biaya Sendiri / Keluarga</option>
-                            <option value="Beasiswa ADIK">Beasiswa ADIK</option>
-                            <option value="Beasiswa BIDIKMISI">Beasiswa BIDIKMISI</option>
-                            <option value="Beasiswa Lain">Beasiswa Lain</option>
-                        </select>
-                    </div>
+                <div class="space-y-8">
 
-                    {{-- Organisasi --}}
-                    <div class="md:col-span-2 bg-gray-50 p-4 rounded">
-                        <label class="label">Apakah Anda aktif di Organisasi? <span class="text-red-500">*</span></label>
-                        <div class="flex gap-4 mb-3">
-                            <label class="inline-flex items-center"><input type="radio" name="q35_organisasi"
-                                    value="Ya" x-model="formData.q35_organisasi" class="mr-2"> Ya</label>
-                            <label class="inline-flex items-center"><input type="radio" name="q35_organisasi"
-                                    value="Tidak" x-model="formData.q35_organisasi" class="mr-2"> Tidak</label>
-                        </div>
-                        <div x-show="formData.q35_organisasi === 'Ya'" x-transition>
-                            <label class="label">Tingkat Keaktifan</label>
-                            <select name="q36_keaktifan" x-model="formData.q36_keaktifan" class="input-field w-1/2">
-                                <option value="Anggota Biasa">Anggota Biasa</option>
-                                <option value="Pengurus">Pengurus</option>
-                                <option value="Ketua">Ketua / Pimpinan</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {{-- Kursus --}}
-                    <div class="md:col-span-2 bg-gray-50 p-4 rounded">
-                        <label class="label">Apakah Anda mengambil Pendidikan Tambahan/Kursus? <span
-                                class="text-red-500">*</span></label>
-                        <div class="flex gap-4 mb-3">
-                            <label class="inline-flex items-center"><input type="radio" name="q37_kursus"
-                                    value="Ya" x-model="formData.q37_kursus" class="mr-2"> Ya</label>
-                            <label class="inline-flex items-center"><input type="radio" name="q37_kursus"
-                                    value="Tidak" x-model="formData.q37_kursus" class="mr-2"> Tidak</label>
-                        </div>
-                        <div x-show="formData.q37_kursus === 'Ya'" x-transition>
-                            <label class="label">Sebutkan Nama Kursus</label>
-                            <input type="text" name="q37a_nama_kursus" x-model="formData.q37a_nama_kursus"
-                                class="input-field" placeholder="Contoh: English Course, Coding Bootcamp">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 border-b pb-4 mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                            Latar Belakang
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tempat Tinggal Selama Kuliah
+                                    <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <select name="q33_tempat_tinggal" x-model="formData.q33_tempat_tinggal"
+                                        class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 cursor-pointer">
+                                        <option value="">-- Pilih Tempat Tinggal --</option>
+                                        <option value="Bersama Orang Tua">Bersama Orang Tua</option>
+                                        <option value="Kos">Kos / Sewa</option>
+                                        <option value="Asrama">Asrama</option>
+                                        <option value="Lainnya">Lainnya</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Sumber Biaya Kuliah <span
+                                        class="text-red-500">*</span></label>
+                                <select name="q34_sumber_biaya" x-model="formData.q34_sumber_biaya"
+                                    class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 cursor-pointer">
+                                    <option value="">-- Pilih Sumber Biaya --</option>
+                                    <option value="Biaya Sendiri / Keluarga">Biaya Sendiri / Keluarga</option>
+                                    <option value="Beasiswa ADIK">Beasiswa ADIK</option>
+                                    <option value="Beasiswa BIDIKMISI">Beasiswa BIDIKMISI</option>
+                                    <option value="Beasiswa Lain">Beasiswa Lainnya</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {{-- MATRIKS EVALUASI (Q38 & Q40) --}}
-                <div class="space-y-6 mt-6">
-                    <h3 class="font-bold text-gray-700">Evaluasi Pembelajaran (1: Sangat Buruk - 5: Sangat Baik)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                    {{-- Q38 --}}
-                    <div class="overflow-x-auto rounded-lg border border-gray-200">
-                        <table class="w-full text-sm text-gray-600">
-                            <thead class="bg-gray-100 text-xs uppercase">
-                                <tr>
-                                    <th class="px-4 py-3 text-left">Aspek Pembelajaran</th>
-                                    @for ($i = 1; $i <= 5; $i++)
-                                        <th class="px-2 py-3 text-center">{{ $i }}</th>
-                                    @endfor
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100">
+                        <div class="bg-purple-50 rounded-xl border border-purple-100 p-6 flex flex-col h-full">
+                            <label class="font-bold text-gray-800 mb-3 block">Aktif di Organisasi Kampus?</label>
+
+                            <div class="flex gap-4 mb-4">
+                                <label class="flex-1 cursor-pointer">
+                                    <input type="radio" name="q35_organisasi" value="Ya"
+                                        x-model="formData.q35_organisasi" class="peer sr-only">
+                                    <div
+                                        class="text-center py-2 px-4 border rounded-lg bg-white text-gray-600 peer-checked:bg-purple-600 peer-checked:text-white peer-checked:border-purple-600 transition shadow-sm">
+                                        Ya
+                                    </div>
+                                </label>
+                                <label class="flex-1 cursor-pointer">
+                                    <input type="radio" name="q35_organisasi" value="Tidak"
+                                        x-model="formData.q35_organisasi" class="peer sr-only">
+                                    <div
+                                        class="text-center py-2 px-4 border rounded-lg bg-white text-gray-600 peer-checked:bg-gray-600 peer-checked:text-white peer-checked:border-gray-600 transition shadow-sm">
+                                        Tidak
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div x-show="formData.q35_organisasi === 'Ya'" x-transition
+                                class="mt-auto pt-4 border-t border-purple-200">
+                                <label class="text-xs font-semibold text-purple-700 uppercase mb-1 block">Tingkat
+                                    Keaktifan</label>
+                                <select name="q36_keaktifan" x-model="formData.q36_keaktifan"
+                                    class="p-2 w-full rounded-md border-purple-300 focus:ring-purple-500 text-sm">
+                                    <option value="Anggota Biasa">Anggota Biasa</option>
+                                    <option value="Pengurus">Pengurus</option>
+                                    <option value="Ketua">Ketua / Pimpinan</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 rounded-xl border border-blue-100 p-6 flex flex-col h-full">
+                            <label class="font-bold text-gray-800 mb-3 block">Pendidikan Tambahan / Kursus?</label>
+
+                            <div class="flex gap-4 mb-4">
+                                <label class="flex-1 cursor-pointer">
+                                    <input type="radio" name="q37_kursus" value="Ya" x-model="formData.q37_kursus"
+                                        class="peer sr-only">
+                                    <div
+                                        class="text-center py-2 px-4 border rounded-lg bg-white text-gray-600 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition shadow-sm">
+                                        Ya
+                                    </div>
+                                </label>
+                                <label class="flex-1 cursor-pointer">
+                                    <input type="radio" name="q37_kursus" value="Tidak" x-model="formData.q37_kursus"
+                                        class="peer sr-only">
+                                    <div
+                                        class="text-center py-2 px-4 border rounded-lg bg-white text-gray-600 peer-checked:bg-gray-600 peer-checked:text-white peer-checked:border-gray-600 transition shadow-sm">
+                                        Tidak
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div x-show="formData.q37_kursus === 'Ya'" x-transition
+                                class="mt-auto pt-4 border-t border-blue-200">
+                                <label class="text-xs font-semibold text-blue-700 uppercase mb-1 block">Nama Kursus</label>
+                                <input type="text" name="q37a_nama_kursus" x-model="formData.q37a_nama_kursus"
+                                    class="p-2 w-full rounded-md border-blue-300 focus:ring-blue-500 text-sm"
+                                    placeholder="Contoh: English Course">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 space-y-8">
+
+                        <div
+                            class="bg-gray-800 text-white rounded-lg p-4 flex justify-between items-center shadow-md sticky top-0 z-10 opacity-95">
+                            <span class="text-xs md:text-sm font-bold">Panduan Skala:</span>
+                            <div class="flex items-center gap-4 text-xs md:text-sm">
+                                <div class="flex items-center gap-1"><span
+                                        class="w-3 h-3 rounded-full bg-red-400 block"></span> 1: Buruk</div>
+                                <div class="flex items-center gap-1"><span
+                                        class="w-3 h-3 rounded-full bg-green-400 block"></span> 5: Sangat Baik</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 pl-2 border-l-4 border-purple-500">Evaluasi
+                                Pembelajaran</h3>
+                            <div class="space-y-4">
                                 @foreach ($aspek_pembelajaran as $key => $label)
-                                    <tr>
-                                        <td class="px-4 py-2 font-medium">{{ $label }}</td>
-                                        @for ($i = 1; $i <= 5; $i++)
-                                            <td class="px-2 py-2 text-center">
-                                                <input type="radio" name="{{ $key }}"
-                                                    value="{{ $i }}" x-model="formData.{{ $key }}"
-                                                    class="cursor-pointer">
-                                            </td>
-                                        @endfor
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                                    <div
+                                        class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md transition duration-200">
+                                        <p class="text-gray-700 font-medium mb-3">{{ $label }}</p>
 
-                    <h3 class="font-bold text-gray-700 mt-4">Evaluasi Fasilitas (1: Sangat Buruk - 5: Sangat Baik)</h3>
-                    {{-- Q40 --}}
-                    <div class="overflow-x-auto rounded-lg border border-gray-200">
-                        <table class="w-full text-sm text-gray-600">
-                            <thead class="bg-gray-100 text-xs uppercase">
-                                <tr>
-                                    <th class="px-4 py-3 text-left">Fasilitas</th>
-                                    @for ($i = 1; $i <= 5; $i++)
-                                        <th class="px-2 py-3 text-center">{{ $i }}</th>
-                                    @endfor
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100">
-                                @foreach ($fasilitas as $key => $label)
-                                    <tr>
-                                        <td class="px-4 py-2 font-medium">{{ $label }}</td>
-                                        @for ($i = 1; $i <= 5; $i++)
-                                            <td class="px-2 py-2 text-center">
-                                                <input type="radio" name="{{ $key }}"
-                                                    value="{{ $i }}" x-model="formData.{{ $key }}"
-                                                    class="cursor-pointer">
-                                            </td>
-                                        @endfor
-                                    </tr>
+                                        <div class="flex justify-between md:justify-start md:gap-4">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <label class="cursor-pointer relative">
+                                                    <input type="radio" name="{{ $key }}"
+                                                        value="{{ $i }}"
+                                                        x-model="formData.{{ $key }}" class="peer sr-only">
+                                                    <div
+                                                        class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg border-2 border-gray-100 bg-gray-50 text-gray-400 font-bold hover:bg-purple-50 hover:border-purple-200 hover:text-purple-600 transition-all peer-checked:bg-purple-600 peer-checked:border-purple-600 peer-checked:text-white peer-checked:scale-110 shadow-sm">
+                                                        {{ $i }}
+                                                    </div>
+                                                </label>
+                                            @endfor
+                                        </div>
+                                    </div>
                                 @endforeach
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 pl-2 border-l-4 border-indigo-500">Evaluasi
+                                Fasilitas</h3>
+                            <div class="space-y-4">
+                                @foreach ($fasilitas as $key => $label)
+                                    <div
+                                        class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md transition duration-200">
+                                        <p class="text-gray-700 font-medium mb-3">{{ $label }}</p>
+
+                                        <div class="flex justify-between md:justify-start md:gap-4">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <label class="cursor-pointer relative">
+                                                    <input type="radio" name="{{ $key }}"
+                                                        value="{{ $i }}"
+                                                        x-model="formData.{{ $key }}" class="peer sr-only">
+                                                    <div
+                                                        class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg border-2 border-gray-100 bg-gray-50 text-gray-400 font-bold hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all peer-checked:bg-indigo-600 peer-checked:border-indigo-600 peer-checked:text-white peer-checked:scale-110 shadow-sm">
+                                                        {{ $i }}
+                                                    </div>
+                                                </label>
+                                            @endfor
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
