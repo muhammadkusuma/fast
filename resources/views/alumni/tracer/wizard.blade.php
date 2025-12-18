@@ -189,10 +189,21 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Kode Pos <span
-                                            class="text-red-500">*</span></label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Kode Pos <span class="text-red-500">*</span>
+                                    </label>
                                     <input type="text" name="q8_kodepos" x-model="formData.q8_kodepos"
-                                        class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                        inputmode="numeric" pattern="[0-9]*" {{-- Mencegah huruf saat diketik --}}
+                                        @keypress="if (!/[0-9]/.test($event.key)) $event.preventDefault()"
+                                        {{-- Membatasi maksimal 4 digit secara real-time --}}
+                                        @input="formData.q8_kodepos = formData.q8_kodepos.replace(/\D/g, '').slice(0, 5)"
+                                        class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        placeholder="Contoh: 12345" required>
+                                    {{-- Opsional: Pesan error jika kosong --}}
+                                    <p x-show="formData.q8_kodepos && formData.q8_kodepos.length < 1"
+                                        class="text-xs text-red-500 mt-1">
+                                        Minimal 1 digit diperlukan.
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -354,12 +365,48 @@
                                         placeholder="PT. Mencari Cinta Sejati">
                                 </div>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Mulai Bekerja <span
-                                        class="text-red-500">*</span></label>
+                            <div x-data="{
+                                startYear: 2000,
+                                currentYear: new Date().getFullYear(),
+                                // Fungsi untuk membuat daftar tahun dari sekarang mundur ke 2000
+                                get yearRange() {
+                                    let years = [];
+                                    for (let i = this.currentYear; i >= this.startYear; i--) {
+                                        years.push(i);
+                                    }
+                                    return years;
+                                }
+                            }">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Tahun Mulai Bekerja <span class="text-red-500">*</span>
+                                </label>
+
                                 <input type="text" name="q15_tahun_masuk" x-model="formData.q15_tahun_masuk"
+                                    list="list_tahun" inputmode="numeric" {{-- Mencegah ketik huruf --}}
+                                    @keypress="if (!/[0-9]/.test($event.key)) $event.preventDefault()"
+                                    {{-- Mencegah input lebih dari 4 digit dan validasi range --}}
+                                    @input="
+            formData.q15_tahun_masuk = formData.q15_tahun_masuk.replace(/\D/g, '').slice(0, 4);
+            if (formData.q15_tahun_masuk.length === 4) {
+                if (formData.q15_tahun_masuk > currentYear) formData.q15_tahun_masuk = currentYear;
+                if (formData.q15_tahun_masuk < startYear && formData.q15_tahun_masuk.length === 4) {
+                    // Opsional: biarkan user mengetik, tapi bisa beri peringatan
+                }
+            }
+        "
                                     class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"
-                                    placeholder="Contoh: 2023">
+                                    placeholder="Cari atau pilih tahun (2000 - Sekarang)">
+
+                                <datalist id="list_tahun">
+                                    <template x-for="year in yearRange" :key="year">
+                                        <option :value="year"></option>
+                                    </template>
+                                </datalist>
+
+                                <p x-show="formData.q15_tahun_masuk && (formData.q15_tahun_masuk < startYear) && formData.q15_tahun_masuk.length === 4"
+                                    class="text-xs text-red-500 mt-1">
+                                    Tahun minimal adalah 2000.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -381,22 +428,45 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Nama
-                                    Pimpinan</label>
-                                <input type="text" name="q13b_pimpinan" x-model="formData.q13b_pimpinan"
-                                    class="p-2 w-full rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">
+                                    Nama Pimpinan <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="q13b_pimpinan" x-model="formData.q13b_pimpinan" required
+                                    class="p-2 w-full rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                                    placeholder="Nama Lengkap">
+                                <p x-show="!formData.q13b_pimpinan" class="text-[10px] text-red-500 mt-1">Nama pimpinan
+                                    wajib diisi</p>
                             </div>
+
                             <div>
-                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Email
-                                    Pimpinan</label>
+                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">
+                                    Email Pimpinan <span class="text-red-500">*</span>
+                                </label>
                                 <input type="email" name="q13c_email_pimpinan" x-model="formData.q13c_email_pimpinan"
-                                    class="p-2 w-full rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                                    required
+                                    class="p-2 w-full rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                                    placeholder="contoh@perusahaan.com">
+                                <p x-show="!formData.q13c_email_pimpinan" class="text-[10px] text-red-500 mt-1">Email
+                                    wajib diisi</p>
                             </div>
+
                             <div>
-                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">No. HP
-                                    Pimpinan</label>
+                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">
+                                    No. HP Pimpinan <span class="text-red-500">*</span>
+                                </label>
                                 <input type="text" name="q16_telp_pimpinan" x-model="formData.q16_telp_pimpinan"
-                                    class="p-2 w-full rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                                    inputmode="numeric" required
+                                    @keypress="if (!/[0-9]/.test($event.key)) $event.preventDefault()"
+                                    @input="formData.q16_telp_pimpinan = formData.q16_telp_pimpinan.replace(/\D/g, '').slice(0, 12)"
+                                    class="p-2 w-full rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                                    placeholder="Contoh: 081234567890">
+
+                                <div class="flex justify-between mt-1">
+                                    <p x-show="!formData.q16_telp_pimpinan" class="text-[10px] text-red-500">Nomor HP
+                                        wajib diisi</p>
+                                    <span class="text-[10px] text-gray-400 ml-auto"
+                                        x-text="(formData.q16_telp_pimpinan?.length || 0) + '/12'"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
