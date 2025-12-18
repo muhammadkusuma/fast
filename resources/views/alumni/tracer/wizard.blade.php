@@ -167,43 +167,54 @@
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Provinsi <span
-                                            class="text-red-500">*</span></label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Provinsi <span class="text-red-500">*</span>
+                                    </label>
                                     <select name="q7_provinsi" x-model="formData.q7_provinsi" @change="loadKabupaten()"
+                                        required
                                         class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                                         <option value="">Pilih Provinsi</option>
-                                        <template x-for="p in listProvinsi">
+                                        <template x-for="p in listProvinsi" :key="p">
                                             <option :value="p" x-text="p"></option>
                                         </template>
                                     </select>
+                                    <p x-show="!formData.q7_provinsi" class="text-[10px] text-red-500 mt-1">Silakan pilih
+                                        provinsi</p>
                                 </div>
+
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Kota/Kabupaten <span
-                                            class="text-red-500">*</span></label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Kota/Kabupaten <span class="text-red-500">*</span>
+                                    </label>
                                     <select name="q9_kota" x-model="formData.q9_kota" :disabled="!formData.q7_provinsi"
+                                        required
                                         class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed">
                                         <option value="">Pilih Kota</option>
-                                        <template x-for="k in listKabupaten">
+                                        <template x-for="k in listKabupaten" :key="k">
                                             <option :value="k" x-text="k"></option>
                                         </template>
                                     </select>
+                                    <p x-show="formData.q7_provinsi && !formData.q9_kota"
+                                        class="text-[10px] text-red-500 mt-1">Silakan pilih kota/kabupaten</p>
                                 </div>
+
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">
                                         Kode Pos <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text" name="q8_kodepos" x-model="formData.q8_kodepos"
-                                        inputmode="numeric" pattern="[0-9]*" {{-- Mencegah huruf saat diketik --}}
+                                        inputmode="numeric" pattern="[0-9]*" required
                                         @keypress="if (!/[0-9]/.test($event.key)) $event.preventDefault()"
-                                        {{-- Membatasi maksimal 4 digit secara real-time --}}
                                         @input="formData.q8_kodepos = formData.q8_kodepos.replace(/\D/g, '').slice(0, 5)"
                                         class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                        placeholder="Contoh: 12345" required>
-                                    {{-- Opsional: Pesan error jika kosong --}}
-                                    <p x-show="formData.q8_kodepos && formData.q8_kodepos.length < 1"
-                                        class="text-xs text-red-500 mt-1">
-                                        Minimal 1 digit diperlukan.
-                                    </p>
+                                        placeholder="Contoh: 12345">
+
+                                    <div class="flex justify-between">
+                                        <p x-show="!formData.q8_kodepos" class="text-[10px] text-red-500 mt-1">Kode pos
+                                            wajib diisi</p>
+                                        <p x-show="formData.q8_kodepos && formData.q8_kodepos.length < 5"
+                                            class="text-[10px] text-orange-500 mt-1">Harus 5 digit</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -280,16 +291,30 @@
                                 <label class="block text-lg font-bold text-gray-800 mb-2">
                                     Status Saat Ini <span class="text-red-500">*</span>
                                 </label>
-                                <p class="text-sm text-gray-500 mb-4">Pilih status yang paling menggambarkan kondisi Anda
-                                    saat ini untuk menentukan pertanyaan selanjutnya.</p>
+                                <p class="text-sm text-gray-500 mb-4">
+                                    Pilih status yang paling menggambarkan kondisi Anda saat ini untuk menentukan pertanyaan
+                                    selanjutnya.
+                                </p>
 
-                                <select name="status_bekerja" x-model="formData.status_bekerja"
-                                    class="block w-full text-md py-3 px-4 border-2 border-blue-100 bg-blue-50 rounded-lg text-blue-900 focus:ring-blue-500 focus:border-blue-500 transition cursor-pointer">
+                                <select name="status_bekerja" x-model="formData.status_bekerja" required
+                                    class="block w-full text-md py-3 px-4 border-2 border-blue-100 bg-blue-50 rounded-lg text-blue-900 focus:ring-blue-500 focus:border-blue-500 transition cursor-pointer"
+                                    :class="!formData.status_bekerja ? 'border-red-200' : 'border-blue-100'">
                                     <option value="">-- Pilih Status --</option>
                                     <option value="Sudah Bekerja">Sudah Bekerja / Wiraswasta</option>
                                     <option value="Belum Bekerja">Belum Bekerja / Sedang Mencari</option>
                                     <option value="Sedang Kuliah">Sedang Melanjutkan Pendidikan</option>
                                 </select>
+
+                                <div x-show="!formData.status_bekerja" x-transition
+                                    class="mt-2 flex items-center gap-1 text-red-500 text-sm font-medium">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Status wajib dipilih untuk melanjutkan.</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -329,46 +354,82 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Instansi / Perusahaan
-                                    <span class="text-red-500">*</span></label>
-                                <select name="q12_jenis_perusahaan" x-model="formData.q12_jenis_perusahaan"
-                                    class="p-3 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
-                                    <option value="">-- Pilih Jenis Instansi --</option>
-                                    <option value="Instansi Pemerintah">Instansi Pemerintah (PNS/Non-PNS)</option>
-                                    <option value="BUMN/BUMD">BUMN / BUMD</option>
-                                    <option value="Swasta Nasional">Perusahaan Swasta Nasional</option>
-                                    <option value="Swasta Multinasional">Perusahaan Multinasional</option>
-                                    <option value="Wiraswasta">Wiraswasta / Pemilik Usaha</option>
-                                    <option value="Lainnya">Lainnya</option>
-                                </select>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Jenis Instansi / Perusahaan <span class="text-red-500">*</span>
+                                    </label>
+                                    <select name="q12_jenis_perusahaan" x-model="formData.q12_jenis_perusahaan" required
+                                        class="p-3 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 transition-colors"
+                                        :class="!formData.q12_jenis_perusahaan ? 'bg-orange-50/30' : 'bg-white'">
+                                        <option value="">-- Pilih Jenis Instansi --</option>
+                                        <option value="Instansi Pemerintah">Instansi Pemerintah (PNS/Non-PNS)</option>
+                                        <option value="BUMN/BUMD">BUMN / BUMD</option>
+                                        <option value="Swasta Nasional">Perusahaan Swasta Nasional</option>
+                                        <option value="Swasta Multinasional">Perusahaan Multinasional</option>
+                                        <option value="Wiraswasta">Wiraswasta / Pemilik Usaha</option>
+                                        <option value="Lainnya">Lainnya</option>
+                                    </select>
+
+                                    <div x-show="!formData.q12_jenis_perusahaan" x-transition.opacity
+                                        class="mt-1 text-[10px] text-red-500 font-medium flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        Pilih salah satu jenis instansi.
+                                    </div>
+                                </div>
 
                                 <div x-show="formData.q12_jenis_perusahaan === 'Lainnya'" x-transition class="mt-3">
+                                    <label class="block text-xs font-medium text-gray-600 mb-1 ml-1">
+                                        Sebutkan Jenis Instansi <span class="text-red-500">*</span>
+                                    </label>
                                     <input type="text" name="q12a_lainnya" x-model="formData.q12a_lainnya"
-                                        class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 bg-gray-50"
+                                        {{-- Input ini hanya wajib diisi jika q12 adalah 'Lainnya' --}} :required="formData.q12_jenis_perusahaan === 'Lainnya'"
+                                        class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 bg-gray-50"
                                         placeholder="Sebutkan jenis instansi Anda...">
+
+                                    <p x-show="formData.q12_jenis_perusahaan === 'Lainnya' && !formData.q12a_lainnya"
+                                        class="text-[10px] text-red-500 mt-1 ml-1">
+                                        Bagian ini tidak boleh kosong jika memilih 'Lainnya'.
+                                    </p>
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Perusahaan / Kantor <span
-                                        class="text-red-500">*</span></label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
-                                            stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                        </svg>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Nama Perusahaan / Kantor <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg class="h-5 w-5 text-gray-400"
+                                                :class="!formData.q13a_nama_kantor ? 'text-red-300' : 'text-gray-400'"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                            </svg>
+                                        </div>
+                                        <input type="text" name="q13a_nama_kantor" x-model="formData.q13a_nama_kantor"
+                                            required
+                                            class="p-2 pl-10 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"
+                                            :class="!formData.q13a_nama_kantor ? 'border-red-200 bg-red-50/10' :
+                                                'border-gray-300 bg-white'"
+                                            placeholder="PT. Contoh Perusahaan">
                                     </div>
-                                    <input type="text" name="q13a_nama_kantor" x-model="formData.q13a_nama_kantor"
-                                        class="p-2 pl-10 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"
-                                        placeholder="PT. Mencari Cinta Sejati">
+
+                                    <p x-show="!formData.q13a_nama_kantor" x-transition
+                                        class="text-[10px] text-red-500 mt-1 ml-1 flex items-center gap-1">
+                                        <span class="w-1 h-1 bg-red-500 rounded-full"></span>
+                                        Nama perusahaan wajib diisi.
+                                    </p>
                                 </div>
                             </div>
                             <div x-data="{
                                 startYear: 2000,
                                 currentYear: new Date().getFullYear(),
-                                // Fungsi untuk membuat daftar tahun dari sekarang mundur ke 2000
                                 get yearRange() {
                                     let years = [];
                                     for (let i = this.currentYear; i >= this.startYear; i--) {
@@ -382,19 +443,18 @@
                                 </label>
 
                                 <input type="text" name="q15_tahun_masuk" x-model="formData.q15_tahun_masuk"
-                                    list="list_tahun" inputmode="numeric" {{-- Mencegah ketik huruf --}}
+                                    list="list_tahun" inputmode="numeric" required {{-- Mencegah ketik huruf --}}
                                     @keypress="if (!/[0-9]/.test($event.key)) $event.preventDefault()"
-                                    {{-- Mencegah input lebih dari 4 digit dan validasi range --}}
+                                    {{-- Logika filter angka, limit 4 digit, dan batasan tahun --}}
                                     @input="
             formData.q15_tahun_masuk = formData.q15_tahun_masuk.replace(/\D/g, '').slice(0, 4);
             if (formData.q15_tahun_masuk.length === 4) {
                 if (formData.q15_tahun_masuk > currentYear) formData.q15_tahun_masuk = currentYear;
-                if (formData.q15_tahun_masuk < startYear && formData.q15_tahun_masuk.length === 4) {
-                    // Opsional: biarkan user mengetik, tapi bisa beri peringatan
-                }
             }
         "
                                     class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"
+                                    :class="!formData.q15_tahun_masuk || (formData.q15_tahun_masuk.length === 4 && formData
+                                        .q15_tahun_masuk < startYear) ? 'border-red-300' : 'border-gray-300'"
                                     placeholder="Cari atau pilih tahun (2000 - Sekarang)">
 
                                 <datalist id="list_tahun">
@@ -403,8 +463,12 @@
                                     </template>
                                 </datalist>
 
+                                <p x-show="!formData.q15_tahun_masuk" class="text-[10px] text-red-500 mt-1">
+                                    Tahun mulai bekerja wajib diisi.
+                                </p>
+
                                 <p x-show="formData.q15_tahun_masuk && (formData.q15_tahun_masuk < startYear) && formData.q15_tahun_masuk.length === 4"
-                                    class="text-xs text-red-500 mt-1">
+                                    class="text-[10px] text-red-500 mt-1">
                                     Tahun minimal adalah 2000.
                                 </p>
                             </div>
@@ -476,56 +540,105 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Range Gaji/Bulan <span
-                                        class="text-red-500">*</span></label>
-                                <select name="q19_penghasilan" x-model="formData.q19_penghasilan"
-                                    class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
-                                    <option value="">-- Pilih Range --</option>
-                                    <option value="< 3 Juta">
-                                        < Rp 3 Juta</option>
-                                    <option value="3 - 5 Juta">Rp 3 - 5 Juta</option>
-                                    <option value="5 - 10 Juta">Rp 5 - 10 Juta</option>
-                                    <option value="> 10 Juta">> Rp 10 Juta</option>
-                                </select>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Range Gaji/Bulan <span class="text-red-500">*</span>
+                                    </label>
+                                    <select name="q19_penghasilan" x-model="formData.q19_penghasilan" required
+                                        class="p-2 w-full rounded-lg border shadow-sm focus:border-orange-500 focus:ring-orange-500 transition-all"
+                                        :class="!formData.q19_penghasilan ? 'border-red-300 bg-red-50/10' :
+                                            'border-gray-300 bg-white'">
+                                        <option value="">-- Pilih Range --</option>
+                                        <option value="< 3 Juta">
+                                            < Rp 3 Juta</option>
+                                        <option value="3 - 5 Juta">Rp 3 - 5 Juta</option>
+                                        <option value="5 - 10 Juta">Rp 5 - 10 Juta</option>
+                                        <option value="> 10 Juta">> Rp 10 Juta</option>
+                                    </select>
+
+                                    <div x-show="!formData.q19_penghasilan" x-transition
+                                        class="text-[10px] text-red-500 mt-1 ml-1 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        Pilih salah satu range gaji.
+                                    </div>
+                                </div>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Status Kepegawaian <span
-                                        class="text-red-500">*</span></label>
-                                <select name="q20_status_pekerjaan" x-model="formData.q20_status_pekerjaan"
-                                    class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
-                                    <option value="">-- Pilih Status --</option>
-                                    <option value="Tetap">Tetap</option>
-                                    <option value="Kontrak">Kontrak</option>
-                                    <option value="Honorer">Honorer</option>
-                                    <option value="Self Employed">Wiraswasta / Self Employed</option>
-                                </select>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Status Kepegawaian <span class="text-red-500">*</span>
+                                    </label>
+                                    <select name="q20_status_pekerjaan" x-model="formData.q20_status_pekerjaan" required
+                                        class="p-2 w-full rounded-lg border shadow-sm focus:border-orange-500 focus:ring-orange-500 transition-all"
+                                        :class="!formData.q20_status_pekerjaan ? 'border-red-300 bg-red-50/10' :
+                                            'border-gray-300 bg-white'">
+                                        <option value="">-- Pilih Status --</option>
+                                        <option value="Tetap">Tetap</option>
+                                        <option value="Kontrak">Kontrak</option>
+                                        <option value="Honorer">Honorer</option>
+                                        <option value="Self Employed">Wiraswasta / Self Employed</option>
+                                    </select>
+
+                                    <div x-show="!formData.q20_status_pekerjaan" x-transition
+                                        class="text-[10px] text-red-500 mt-1 ml-1 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Status kepegawaian wajib dipilih.</span>
+                                    </div>
+                                </div>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Kesesuaian Bidang Studi <span
-                                        class="text-red-500">*</span></label>
-                                <select name="q21_hubungan" x-model="formData.q21_hubungan"
-                                    class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
-                                    <option value="">-- Pilih Tingkat --</option>
-                                    <option value="Sangat Erat">Sangat Erat</option>
-                                    <option value="Erat">Erat</option>
-                                    <option value="Cukup Erat">Cukup Erat</option>
-                                    <option value="Kurang Erat">Kurang Erat</option>
-                                    <option value="Tidak Sama Sekali">Tidak Sama Sekali</option>
-                                </select>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Kesesuaian Bidang Studi <span class="text-red-500">*</span>
+                                    </label>
+                                    <select name="q21_hubungan" x-model="formData.q21_hubungan" required
+                                        class="p-2 w-full rounded-lg border shadow-sm focus:border-orange-500 focus:ring-orange-500 transition-all"
+                                        :class="!formData.q21_hubungan ? 'border-red-300 bg-red-50/10' :
+                                            'border-gray-300 bg-white'">
+                                        <option value="">-- Pilih Tingkat --</option>
+                                        <option value="Sangat Erat">Sangat Erat</option>
+                                        <option value="Erat">Erat</option>
+                                        <option value="Cukup Erat">Cukup Erat</option>
+                                        <option value="Kurang Erat">Kurang Erat</option>
+                                        <option value="Tidak Sama Sekali">Tidak Sama Sekali</option>
+                                    </select>
+
+                                    <div x-show="!formData.q21_hubungan" x-transition
+                                        class="text-[10px] text-red-500 mt-1 ml-1 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Tingkat kesesuaian wajib dipilih.</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="pt-4">
-                        <label class="block text-lg font-bold text-gray-800 mb-3">Apakah ini pekerjaan pertama Anda setelah
-                            lulus? <span class="text-red-500">*</span></label>
+                        <label class="block text-lg font-bold text-gray-800 mb-3">
+                            Apakah ini pekerjaan pertama Anda setelah lulus? <span class="text-red-500">*</span>
+                        </label>
 
                         <div class="grid grid-cols-2 gap-4 mb-6">
                             <label class="cursor-pointer relative">
                                 <input type="radio" name="is_first_job" value="Ya" x-model="formData.is_first_job"
-                                    class="peer sr-only">
+                                    required class="peer sr-only">
                                 <div
                                     class="p-4 rounded-xl border-2 border-gray-200 hover:border-green-400 hover:bg-green-50 peer-checked:border-green-500 peer-checked:bg-green-50 transition duration-200 flex flex-col items-center">
                                     <span class="text-2xl mb-1">👍</span>
@@ -559,6 +672,10 @@
                             </label>
                         </div>
 
+                        <p x-show="!formData.is_first_job" class="text-xs text-red-500 mb-4 animate-pulse">
+                            * Silakan pilih salah satu status pekerjaan di atas.
+                        </p>
+
                         <div x-show="formData.is_first_job === 'Tidak'"
                             x-transition:enter="transition ease-out duration-300"
                             x-transition:enter-start="opacity-0 -translate-y-2"
@@ -574,32 +691,65 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                Riwayat Pekerjaan Pertama
+                                Riwayat Pekerjaan Pertama <span class="text-red-500">*</span>
                             </h4>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="md:col-span-2">
-                                    <label class="label text-orange-900">Nama Kantor Pertama</label>
+                                    <label class="block text-xs font-semibold text-orange-900 mb-1">
+                                        Nama Kantor Pertama <span class="text-red-500">*</span>
+                                    </label>
                                     <input type="text" name="q25_kantor_pertama" x-model="formData.q25_kantor_pertama"
-                                        class="p-2 w-full rounded-lg border border-orange-300 focus:border-orange-500 focus:ring-orange-500 bg-white">
+                                        :required="formData.is_first_job === 'Tidak'"
+                                        class="p-2 w-full rounded-lg border shadow-sm focus:border-orange-500 focus:ring-orange-500 bg-white"
+                                        :class="formData.is_first_job === 'Tidak' && !formData.q25_kantor_pertama ?
+                                            'border-orange-400' : 'border-orange-300'"
+                                        placeholder="Masukkan nama perusahaan/kantor sebelumnya">
+
+                                    <p x-show="formData.is_first_job === 'Tidak' && !formData.q25_kantor_pertama"
+                                        class="text-[10px] text-orange-600 mt-1 font-medium">
+                                        Wajib diisi jika ini bukan pekerjaan pertama Anda.
+                                    </p>
                                 </div>
+
                                 <div>
-                                    <label class="label text-orange-900">Alasan Berhenti/Pindah</label>
+                                    <label class="block text-xs font-semibold text-orange-900 mb-1">
+                                        Alasan Berhenti/Pindah <span class="text-red-500">*</span>
+                                    </label>
                                     <input type="text" name="q26_alasan_berhenti"
                                         x-model="formData.q26_alasan_berhenti"
-                                        class="p-2 w-full rounded-lg border border-orange-300 focus:border-orange-500 focus:ring-orange-500 bg-white"
+                                        :required="formData.is_first_job === 'Tidak'"
+                                        class="p-2 w-full rounded-lg border shadow-sm focus:border-orange-500 focus:ring-orange-500 bg-white"
+                                        :class="formData.is_first_job === 'Tidak' && !formData.q26_alasan_berhenti ?
+                                            'border-orange-400' : 'border-orange-300'"
                                         placeholder="Cth: Mendapat tawaran lebih baik">
+
+                                    <p x-show="formData.is_first_job === 'Tidak' && !formData.q26_alasan_berhenti"
+                                        class="text-[10px] text-orange-600 mt-1 font-medium">
+                                        Alasan wajib diisi.
+                                    </p>
                                 </div>
+
                                 <div>
-                                    <label class="label text-orange-900">Gaji Awal (Saat itu)</label>
+                                    <label class="block text-xs font-semibold text-orange-900 mb-1">
+                                        Gaji Awal (Saat itu) <span class="text-red-500">*</span>
+                                    </label>
                                     <select name="q28_gaji_pertama" x-model="formData.q28_gaji_pertama"
-                                        class="p-2 w-full rounded-lg border border-orange-300 focus:border-orange-500 focus:ring-orange-500 bg-white">
+                                        :required="formData.is_first_job === 'Tidak'"
+                                        class="p-2 w-full rounded-lg border shadow-sm focus:border-orange-500 focus:ring-orange-500 bg-white"
+                                        :class="formData.is_first_job === 'Tidak' && !formData.q28_gaji_pertama ?
+                                            'border-orange-400' : 'border-orange-300'">
                                         <option value="">-- Pilih Range --</option>
                                         <option value="< 3 Juta">
                                             < Rp 3 Juta</option>
                                         <option value="3 - 5 Juta">Rp 3 - 5 Juta</option>
                                         <option value="> 5 Juta">> Rp 5 Juta</option>
                                     </select>
+
+                                    <p x-show="formData.is_first_job === 'Tidak' && !formData.q28_gaji_pertama"
+                                        class="text-[10px] text-orange-600 mt-1 font-medium">
+                                        Silakan pilih range gaji awal.
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -634,30 +784,87 @@
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Tempat Tinggal Selama Kuliah
-                                    <span class="text-red-500">*</span></label>
-                                <div class="relative">
-                                    <select name="q33_tempat_tinggal" x-model="formData.q33_tempat_tinggal"
-                                        class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 cursor-pointer">
-                                        <option value="">-- Pilih Tempat Tinggal --</option>
-                                        <option value="Bersama Orang Tua">Bersama Orang Tua</option>
-                                        <option value="Kos">Kos / Sewa</option>
-                                        <option value="Asrama">Asrama</option>
-                                        <option value="Lainnya">Lainnya</option>
-                                    </select>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Tempat Tinggal Selama Kuliah <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <select name="q33_tempat_tinggal" x-model="formData.q33_tempat_tinggal" required
+                                            class="p-2 w-full rounded-lg border shadow-sm focus:border-purple-500 focus:ring-purple-500 cursor-pointer transition-all"
+                                            :class="!formData.q33_tempat_tinggal ? 'border-red-300 bg-red-50/10' :
+                                                'border-gray-300 bg-white'">
+                                            <option value="">-- Pilih Tempat Tinggal --</option>
+                                            <option value="Bersama Orang Tua">Bersama Orang Tua</option>
+                                            <option value="Kos">Kos / Sewa</option>
+                                            <option value="Asrama">Asrama</option>
+                                            <option value="Lainnya">Lainnya</option>
+                                        </select>
+                                    </div>
+
+                                    <div x-show="!formData.q33_tempat_tinggal" x-transition
+                                        class="text-[10px] text-red-500 mt-1 ml-1 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Mohon pilih tempat tinggal Anda.</span>
+                                    </div>
+
+                                    <div x-show="formData.q33_tempat_tinggal === 'Lainnya'" x-transition
+                                        class="mt-3 pl-2 border-l-4 border-purple-200">
+                                        <input type="text" name="q33a_tempat_tinggal_lainnya"
+                                            x-model="formData.q33a_tempat_tinggal_lainnya"
+                                            :required="formData.q33_tempat_tinggal === 'Lainnya'"
+                                            class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-gray-50 text-sm"
+                                            placeholder="Sebutkan tempat tinggal lainnya...">
+                                        <p x-show="!formData.q33a_tempat_tinggal_lainnya"
+                                            class="text-[10px] text-red-500 mt-1">Keterangan wajib diisi.</p>
+                                    </div>
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Sumber Biaya Kuliah <span
-                                        class="text-red-500">*</span></label>
-                                <select name="q34_sumber_biaya" x-model="formData.q34_sumber_biaya"
-                                    class="p-2 w-full rounded-lg border border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 cursor-pointer">
-                                    <option value="">-- Pilih Sumber Biaya --</option>
-                                    <option value="Biaya Sendiri / Keluarga">Biaya Sendiri / Keluarga</option>
-                                    <option value="Beasiswa ADIK">Beasiswa ADIK</option>
-                                    <option value="Beasiswa BIDIKMISI">Beasiswa BIDIKMISI</option>
-                                    <option value="Beasiswa Lain">Beasiswa Lainnya</option>
-                                </select>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Sumber Biaya Kuliah <span class="text-red-500">*</span>
+                                    </label>
+                                    <select name="q34_sumber_biaya" x-model="formData.q34_sumber_biaya" required
+                                        class="p-2 w-full rounded-lg border shadow-sm focus:border-purple-500 focus:ring-purple-500 cursor-pointer transition-all"
+                                        :class="!formData.q34_sumber_biaya ? 'border-red-300 bg-red-50/10' :
+                                            'border-gray-300 bg-white'">
+                                        <option value="">-- Pilih Sumber Biaya --</option>
+                                        <option value="Biaya Sendiri / Keluarga">Biaya Sendiri / Keluarga</option>
+                                        <option value="Beasiswa ADIK">Beasiswa ADIK</option>
+                                        <option value="Beasiswa BIDIKMISI">Beasiswa BIDIKMISI</option>
+                                        <option value="Beasiswa Lain">Beasiswa Lainnya</option>
+                                    </select>
+
+                                    <div x-show="!formData.q34_sumber_biaya" x-transition
+                                        class="text-[10px] text-red-500 mt-1 ml-1 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Mohon pilih sumber biaya kuliah Anda.</span>
+                                    </div>
+
+                                    <div x-show="formData.q34_sumber_biaya === 'Beasiswa Lain'" x-transition
+                                        class="mt-3 pl-2 border-l-4 border-purple-200">
+                                        <label class="block text-[10px] font-semibold text-purple-700 mb-1">Nama
+                                            Beasiswa</label>
+                                        <input type="text" name="q34a_sumber_biaya_lainnya"
+                                            x-model="formData.q34a_sumber_biaya_lainnya"
+                                            :required="formData.q34_sumber_biaya === 'Beasiswa Lain'"
+                                            class="p-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-gray-50 text-sm"
+                                            placeholder="Sebutkan nama beasiswa lainnya...">
+
+                                        <p x-show="!formData.q34a_sumber_biaya_lainnya"
+                                            class="text-[10px] text-red-500 mt-1">Nama beasiswa wajib diisi.</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -665,37 +872,88 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                         <div class="bg-purple-50 rounded-xl border border-purple-100 p-6 flex flex-col h-full">
-                            <label class="font-bold text-gray-800 mb-3 block">Aktif di Organisasi Kampus?</label>
+                            <div>
+                                <label class="font-bold text-gray-800 mb-3 block">
+                                    Aktif di Organisasi Kampus? <span class="text-red-500">*</span>
+                                </label>
 
-                            <div class="flex gap-4 mb-4">
-                                <label class="flex-1 cursor-pointer">
-                                    <input type="radio" name="q35_organisasi" value="Ya"
-                                        x-model="formData.q35_organisasi" class="peer sr-only">
+                                <div class="flex gap-4 mb-2">
+                                    <label class="flex-1 cursor-pointer">
+                                        <input type="radio" name="q35_organisasi" value="Ya"
+                                            x-model="formData.q35_organisasi" required class="peer sr-only">
+                                        <div
+                                            class="text-center py-2 px-4 border rounded-lg bg-white text-gray-600 peer-checked:bg-purple-600 peer-checked:text-white peer-checked:border-purple-600 transition shadow-sm hover:border-purple-300">
+                                            Ya
+                                        </div>
+                                    </label>
+                                    <label class="flex-1 cursor-pointer">
+                                        <input type="radio" name="q35_organisasi" value="Tidak"
+                                            x-model="formData.q35_organisasi" class="peer sr-only">
+                                        <div
+                                            class="text-center py-2 px-4 border rounded-lg bg-white text-gray-600 peer-checked:bg-gray-600 peer-checked:text-white peer-checked:border-gray-600 transition shadow-sm hover:border-gray-300">
+                                            Tidak
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div x-show="!formData.q35_organisasi" x-transition
+                                    class="text-[10px] text-red-500 mt-1 mb-3 flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Silakan pilih salah satu jawaban.</span>
+                                </div>
+
+                                <div x-show="formData.q35_organisasi === 'Ya'" x-transition
+                                    class="mt-3 p-4 bg-purple-50 rounded-xl border border-purple-100 relative">
                                     <div
-                                        class="text-center py-2 px-4 border rounded-lg bg-white text-gray-600 peer-checked:bg-purple-600 peer-checked:text-white peer-checked:border-purple-600 transition shadow-sm">
-                                        Ya
+                                        class="absolute -top-2 left-1/4 w-4 h-4 bg-purple-50 border-t border-l border-purple-100 transform rotate-45">
                                     </div>
-                                </label>
-                                <label class="flex-1 cursor-pointer">
-                                    <input type="radio" name="q35_organisasi" value="Tidak"
-                                        x-model="formData.q35_organisasi" class="peer sr-only">
-                                    <div
-                                        class="text-center py-2 px-4 border rounded-lg bg-white text-gray-600 peer-checked:bg-gray-600 peer-checked:text-white peer-checked:border-gray-600 transition shadow-sm">
-                                        Tidak
-                                    </div>
-                                </label>
+
+                                    <label class="block text-xs font-semibold text-purple-900 mb-2">Sebutkan Nama
+                                        Organisasi <span class="text-red-500">*</span></label>
+                                    <input type="text" name="q35a_nama_organisasi"
+                                        x-model="formData.q35a_nama_organisasi"
+                                        :required="formData.q35_organisasi === 'Ya'"
+                                        class="p-2 w-full rounded-lg border-purple-200 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-sm"
+                                        placeholder="Contoh: BEM, Himpunan Mahasiswa, UKM Seni">
+
+                                    <p x-show="!formData.q35a_nama_organisasi" class="text-[10px] text-red-500 mt-1">Nama
+                                        organisasi tidak boleh kosong.</p>
+                                </div>
                             </div>
 
                             <div x-show="formData.q35_organisasi === 'Ya'" x-transition
                                 class="mt-auto pt-4 border-t border-purple-200">
-                                <label class="text-xs font-semibold text-purple-700 uppercase mb-1 block">Tingkat
-                                    Keaktifan</label>
-                                <select name="q36_keaktifan" x-model="formData.q36_keaktifan"
-                                    class="p-2 w-full rounded-md border-purple-300 focus:ring-purple-500 text-sm">
-                                    <option value="Anggota Biasa">Anggota Biasa</option>
-                                    <option value="Pengurus">Pengurus</option>
-                                    <option value="Ketua">Ketua / Pimpinan</option>
-                                </select>
+                                <div>
+                                    <label class="text-xs font-semibold text-purple-700 uppercase mb-1 block">
+                                        Tingkat Keaktifan <span class="text-red-500">*</span>
+                                    </label>
+                                    <select name="q36_keaktifan" x-model="formData.q36_keaktifan" {{-- Wajib diisi jika pertanyaan organisasi dijawab 'Ya' --}}
+                                        :required="formData.q35_organisasi === 'Ya'"
+                                        class="p-2 w-full rounded-md border shadow-sm focus:ring-purple-500 focus:border-purple-500 text-sm transition-all"
+                                        :class="!formData.q36_keaktifan ? 'border-red-300 bg-red-50/10' :
+                                            'border-purple-300 bg-white'">
+                                        <option value="">-- Pilih Tingkat --</option>
+                                        <option value="Anggota Biasa">Anggota Biasa</option>
+                                        <option value="Pengurus">Pengurus</option>
+                                        <option value="Ketua">Ketua / Pimpinan</option>
+                                    </select>
+
+                                    <div x-show="!formData.q36_keaktifan && formData.q35_organisasi === 'Ya'" x-transition
+                                        class="text-[10px] text-red-500 mt-1 ml-1 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Mohon pilih peran Anda dalam organisasi.</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -703,30 +961,62 @@
                             <label class="font-bold text-gray-800 mb-3 block">Pendidikan Tambahan / Kursus?</label>
 
                             <div class="flex gap-4 mb-4">
-                                <label class="flex-1 cursor-pointer">
-                                    <input type="radio" name="q37_kursus" value="Ya" x-model="formData.q37_kursus"
-                                        class="peer sr-only">
-                                    <div
-                                        class="text-center py-2 px-4 border rounded-lg bg-white text-gray-600 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition shadow-sm">
-                                        Ya
+                                <div>
+                                    <label class="font-bold text-gray-800 mb-3 block">
+                                        Pernah Mengikuti Kursus/Pelatihan? <span class="text-red-500">*</span>
+                                    </label>
+
+                                    <div class="flex gap-4 mb-2">
+                                        <label class="flex-1 cursor-pointer">
+                                            <input type="radio" name="q37_kursus" value="Ya"
+                                                x-model="formData.q37_kursus" required class="peer sr-only">
+                                            <div
+                                                class="text-center py-2 px-4 border rounded-lg bg-white text-gray-600 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition shadow-sm hover:border-blue-300">
+                                                Ya
+                                            </div>
+                                        </label>
+                                        <label class="flex-1 cursor-pointer">
+                                            <input type="radio" name="q37_kursus" value="Tidak"
+                                                x-model="formData.q37_kursus" class="peer sr-only">
+                                            <div
+                                                class="text-center py-2 px-4 border rounded-lg bg-white text-gray-600 peer-checked:bg-gray-600 peer-checked:text-white peer-checked:border-gray-600 transition shadow-sm hover:border-gray-300">
+                                                Tidak
+                                            </div>
+                                        </label>
                                     </div>
-                                </label>
-                                <label class="flex-1 cursor-pointer">
-                                    <input type="radio" name="q37_kursus" value="Tidak" x-model="formData.q37_kursus"
-                                        class="peer sr-only">
-                                    <div
-                                        class="text-center py-2 px-4 border rounded-lg bg-white text-gray-600 peer-checked:bg-gray-600 peer-checked:text-white peer-checked:border-gray-600 transition shadow-sm">
-                                        Tidak
+
+                                    <div x-show="!formData.q37_kursus" x-transition
+                                        class="text-[10px] text-red-500 mt-1 mb-3 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Silakan pilih Ya atau Tidak.</span>
                                     </div>
-                                </label>
+
+                                </div>
                             </div>
 
                             <div x-show="formData.q37_kursus === 'Ya'" x-transition
                                 class="mt-auto pt-4 border-t border-blue-200">
-                                <label class="text-xs font-semibold text-blue-700 uppercase mb-1 block">Nama Kursus</label>
-                                <input type="text" name="q37a_nama_kursus" x-model="formData.q37a_nama_kursus"
-                                    class="p-2 w-full rounded-md border-blue-300 focus:ring-blue-500 text-sm"
-                                    placeholder="Contoh: English Course">
+                                <div>
+                                    <label class="text-xs font-semibold text-blue-700 uppercase mb-1 block">
+                                        Nama Kursus <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" name="q37a_nama_kursus" x-model="formData.q37a_nama_kursus"
+                                        {{-- Wajib diisi hanya jika user memilih 'Ya' pada status kursus --}} :required="formData.q37_kursus === 'Ya'"
+                                        class="p-2 w-full rounded-md border shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm transition-all"
+                                        :class="formData.q37_kursus === 'Ya' && !formData.q37a_nama_kursus ?
+                                            'border-red-300 bg-red-50/10' : 'border-blue-300 bg-white'"
+                                        placeholder="Contoh: English Course">
+
+                                    <p x-show="formData.q37_kursus === 'Ya' && !formData.q37a_nama_kursus" x-transition
+                                        class="text-[10px] text-red-500 mt-1 ml-1 font-medium">
+                                        Silakan sebutkan nama kursus yang pernah diikuti.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -744,21 +1034,31 @@
                             </div>
                         </div>
 
+                        {{-- Bagian Evaluasi Pembelajaran --}}
                         <div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-4 pl-2 border-l-4 border-purple-500">Evaluasi
-                                Pembelajaran</h3>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 pl-2 border-l-4 border-purple-500">
+                                Evaluasi Pembelajaran <span class="text-red-500 text-sm">*</span>
+                            </h3>
                             <div class="space-y-4">
                                 @foreach ($aspek_pembelajaran as $key => $label)
-                                    <div
-                                        class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md transition duration-200">
-                                        <p class="text-gray-700 font-medium mb-3">{{ $label }}</p>
+                                    <div class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md transition duration-200"
+                                        :class="!formData.{{ $key }} ? 'border-red-100 bg-red-50/10' :
+                                            'border-gray-200'">
+
+                                        <div class="flex justify-between items-start mb-3">
+                                            <p class="text-gray-700 font-medium">{{ $label }}</p>
+                                            {{-- Alert kecil jika belum diisi --}}
+                                            <span x-show="!formData.{{ $key }}"
+                                                class="text-[10px] text-red-400 font-bold animate-pulse">WAJIB ISI</span>
+                                        </div>
 
                                         <div class="flex justify-between md:justify-start md:gap-4">
                                             @for ($i = 1; $i <= 5; $i++)
                                                 <label class="cursor-pointer relative">
                                                     <input type="radio" name="{{ $key }}"
                                                         value="{{ $i }}"
-                                                        x-model="formData.{{ $key }}" class="peer sr-only">
+                                                        x-model="formData.{{ $key }}" required
+                                                        {{-- Browser validation --}} class="peer sr-only">
                                                     <div
                                                         class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg border-2 border-gray-100 bg-gray-50 text-gray-400 font-bold hover:bg-purple-50 hover:border-purple-200 hover:text-purple-600 transition-all peer-checked:bg-purple-600 peer-checked:border-purple-600 peer-checked:text-white peer-checked:scale-110 shadow-sm">
                                                         {{ $i }}
@@ -771,21 +1071,30 @@
                             </div>
                         </div>
 
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-4 pl-2 border-l-4 border-indigo-500">Evaluasi
-                                Fasilitas</h3>
+                        {{-- Bagian Evaluasi Fasilitas --}}
+                        <div class="mt-8">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 pl-2 border-l-4 border-indigo-500">
+                                Evaluasi Fasilitas <span class="text-red-500 text-sm">*</span>
+                            </h3>
                             <div class="space-y-4">
                                 @foreach ($fasilitas as $key => $label)
-                                    <div
-                                        class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md transition duration-200">
-                                        <p class="text-gray-700 font-medium mb-3">{{ $label }}</p>
+                                    <div class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md transition duration-200"
+                                        :class="!formData.{{ $key }} ? 'border-red-100 bg-red-50/10' :
+                                            'border-gray-200'">
+
+                                        <div class="flex justify-between items-start mb-3">
+                                            <p class="text-gray-700 font-medium">{{ $label }}</p>
+                                            <span x-show="!formData.{{ $key }}"
+                                                class="text-[10px] text-red-400 font-bold animate-pulse">WAJIB ISI</span>
+                                        </div>
 
                                         <div class="flex justify-between md:justify-start md:gap-4">
                                             @for ($i = 1; $i <= 5; $i++)
                                                 <label class="cursor-pointer relative">
                                                     <input type="radio" name="{{ $key }}"
                                                         value="{{ $i }}"
-                                                        x-model="formData.{{ $key }}" class="peer sr-only">
+                                                        x-model="formData.{{ $key }}" required
+                                                        {{-- Browser validation --}} class="peer sr-only">
                                                     <div
                                                         class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg border-2 border-gray-100 bg-gray-50 text-gray-400 font-bold hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all peer-checked:bg-indigo-600 peer-checked:border-indigo-600 peer-checked:text-white peer-checked:scale-110 shadow-sm">
                                                         {{ $i }}
@@ -815,10 +1124,10 @@
                 </div>
 
                 <div class="space-y-8">
-
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                         <div class="flex items-center justify-between mb-6 border-b pb-4">
-                            <h3 class="text-lg font-bold text-gray-800">Kompetensi Diri</h3>
+                            <h3 class="text-lg font-bold text-gray-800">Kompetensi Diri <span
+                                    class="text-red-500">*</span></h3>
                             <div class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
                                 Skala 1 (Rendah) - 5 (Tinggi)
                             </div>
@@ -826,16 +1135,22 @@
 
                         <div class="space-y-6">
                             @foreach ($kompetensi as $key => $label)
-                                <div class="group">
-                                    <p class="text-gray-700 font-medium mb-3 group-hover:text-green-700 transition">
-                                        {{ $label }}</p>
+                                <div class="group p-3 rounded-lg transition"
+                                    :class="!formData.q42{{ $key }} ? 'bg-red-50/30' : ''">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <p class="text-gray-700 font-medium group-hover:text-green-700 transition">
+                                            {{ $label }}</p>
+                                        <span x-show="!formData.q42{{ $key }}"
+                                            class="text-[10px] text-red-400 font-bold animate-pulse">WAJIB</span>
+                                    </div>
 
                                     <div class="flex justify-between md:justify-start md:gap-4">
                                         @for ($i = 1; $i <= 5; $i++)
                                             <label class="cursor-pointer relative">
                                                 <input type="radio" name="q42{{ $key }}"
                                                     value="{{ $i }}"
-                                                    x-model="formData.q42{{ $key }}" class="peer sr-only">
+                                                    x-model="formData.q42{{ $key }}" required
+                                                    class="peer sr-only">
                                                 <div
                                                     class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg border-2 border-gray-100 bg-gray-50 text-gray-400 font-bold hover:bg-green-50 hover:border-green-200 hover:text-green-600 transition-all peer-checked:bg-green-500 peer-checked:border-green-500 peer-checked:text-white peer-checked:shadow-md peer-checked:scale-110">
                                                     {{ $i }}
@@ -857,14 +1172,15 @@
                             Umpan Balik Terakhir
                         </h3>
 
-                        <div class="bg-white p-5 rounded-lg shadow-sm">
+                        <div class="bg-white p-5 rounded-lg shadow-sm border"
+                            :class="!formData.q45_bahasa ? 'border-red-200' : 'border-transparent'">
                             <label class="block text-sm font-bold text-gray-700 mb-3">Bagaimana kemampuan Bahasa Asing
-                                Anda?</label>
+                                Anda? <span class="text-red-500">*</span></label>
                             <div class="flex justify-between md:justify-start md:gap-4">
                                 @for ($i = 1; $i <= 5; $i++)
                                     <label class="cursor-pointer relative">
                                         <input type="radio" name="q45_bahasa" value="{{ $i }}"
-                                            x-model="formData.q45_bahasa" class="peer sr-only">
+                                            x-model="formData.q45_bahasa" required class="peer sr-only">
                                         <div
                                             class="w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 text-gray-500 hover:border-blue-400 peer-checked:bg-blue-600 peer-checked:border-blue-600 peer-checked:text-white transition">
                                             {{ $i }}
@@ -875,70 +1191,68 @@
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
                             <div>
                                 <label class="block text-sm font-bold text-gray-800 mb-3">Memilih UIN Suska lagi jika
-                                    mengulang?</label>
+                                    mengulang? <span class="text-red-500">*</span></label>
                                 <div class="flex gap-3 mb-3">
                                     <label class="flex-1 cursor-pointer">
                                         <input type="radio" name="q47_uin" value="Ya" x-model="formData.q47_uin"
-                                            class="peer sr-only">
+                                            required class="peer sr-only">
                                         <div
-                                            class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 bg-white hover:bg-green-50 hover:border-green-300 peer-checked:border-green-500 peer-checked:bg-green-100 peer-checked:text-green-800 transition">
+                                            class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 bg-white hover:bg-green-50 peer-checked:border-green-500 peer-checked:bg-green-100 transition">
                                             <span class="text-xl">😍</span>
-                                            <span class="text-sm font-bold mt-1">Ya, Pasti</span>
+                                            <span class="text-sm font-bold mt-1 text-center">Ya, Pasti</span>
                                         </div>
                                     </label>
                                     <label class="flex-1 cursor-pointer">
                                         <input type="radio" name="q47_uin" value="Tidak" x-model="formData.q47_uin"
                                             class="peer sr-only">
                                         <div
-                                            class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 bg-white hover:bg-red-50 hover:border-red-300 peer-checked:border-red-500 peer-checked:bg-red-100 peer-checked:text-red-800 transition">
+                                            class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 bg-white hover:bg-red-50 peer-checked:border-red-500 peer-checked:bg-red-100 transition">
                                             <span class="text-xl">🤔</span>
-                                            <span class="text-sm font-bold mt-1">Mungkin Tidak</span>
+                                            <span class="text-sm font-bold mt-1 text-center">Mungkin Tidak</span>
                                         </div>
                                     </label>
                                 </div>
-                                <div x-show="formData.q47_uin === 'Tidak'" x-transition>
+                                <div x-show="formData.q47_uin === 'Tidak'" x-transition class="mt-2">
                                     <textarea name="q48_alasan_uin" x-model="formData.q48_alasan_uin" rows="2"
-                                        class="p-2 w-full rounded-md border-red-300 focus:ring-red-500 text-sm placeholder-red-300"
+                                        :required="formData.q47_uin === 'Tidak'"
+                                        class="p-2 w-full rounded-md border-red-300 focus:ring-red-500 text-sm"
                                         placeholder="Kritik & saran Anda sangat berharga..."></textarea>
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-bold text-gray-800 mb-3">Memilih Prodi yang sama
-                                    lagi?</label>
+                                <label class="block text-sm font-bold text-gray-800 mb-3">Memilih Prodi yang sama lagi?
+                                    <span class="text-red-500">*</span></label>
                                 <div class="flex gap-3 mb-3">
                                     <label class="flex-1 cursor-pointer">
                                         <input type="radio" name="q49_prodi" value="Ya"
-                                            x-model="formData.q49_prodi" class="peer sr-only">
+                                            x-model="formData.q49_prodi" required class="peer sr-only">
                                         <div
-                                            class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 bg-white hover:bg-green-50 hover:border-green-300 peer-checked:border-green-500 peer-checked:bg-green-100 peer-checked:text-green-800 transition">
+                                            class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 bg-white hover:bg-green-50 peer-checked:border-green-500 peer-checked:bg-green-100 transition">
                                             <span class="text-xl">📚</span>
-                                            <span class="text-sm font-bold mt-1">Ya, Sesuai</span>
+                                            <span class="text-sm font-bold mt-1 text-center">Ya, Sesuai</span>
                                         </div>
                                     </label>
                                     <label class="flex-1 cursor-pointer">
                                         <input type="radio" name="q49_prodi" value="Tidak"
                                             x-model="formData.q49_prodi" class="peer sr-only">
                                         <div
-                                            class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 bg-white hover:bg-red-50 hover:border-red-300 peer-checked:border-red-500 peer-checked:bg-red-100 peer-checked:text-red-800 transition">
+                                            class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 bg-white hover:bg-red-50 peer-checked:border-red-500 peer-checked:bg-red-100 transition">
                                             <span class="text-xl">🔄</span>
-                                            <span class="text-sm font-bold mt-1">Ingin Pindah</span>
+                                            <span class="text-sm font-bold mt-1 text-center">Ingin Pindah</span>
                                         </div>
                                     </label>
                                 </div>
-                                <div x-show="formData.q49_prodi === 'Tidak'" x-transition>
+                                <div x-show="formData.q49_prodi === 'Tidak'" x-transition class="mt-2">
                                     <textarea name="q50_alasan_prodi" x-model="formData.q50_alasan_prodi" rows="2"
-                                        class="p-2 w-full rounded-md border-red-300 focus:ring-red-500 text-sm placeholder-red-300"
-                                        placeholder="Apa alasan utamanya?"></textarea>
+                                        :required="formData.q49_prodi === 'Tidak'"
+                                        class="p-2 w-full rounded-md border-red-300 focus:ring-red-500 text-sm" placeholder="Apa alasan utamanya?"></textarea>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             </div>
 
